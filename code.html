@@ -343,12 +343,16 @@
         <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold text-slate-700">
           <button type="button" onclick="navigateToSection('latest-news')" class="hover:text-lagoon-teal transition-colors cursor-pointer" data-i18n="navNews">ފަހުގެ ޚަބަރު</button>
           <button type="button" onclick="navigateToSection('overview')" class="hover:text-lagoon-teal transition-colors cursor-pointer" data-i18n="navOverview">ރަށުގެ މަޢުލޫމާތު</button>
-          <button type="button" onclick="navigateToSection('experiences')" class="hover:text-lagoon-teal transition-colors cursor-pointer" data-i18n="navExp">ތަޖުރިބާތައް</button>
-
-          <div class="h-5 w-px bg-sand-gold"></div>
-
-          <!-- Bilingual Switcher -->
-          <button type="button" id="lang-toggle-btn" onclick="toggleSiteLanguage()"
+          <div class="flex flex-wrap items-center gap-3">
+            <button type="button" id="family-add-member-btn" onclick="openAddMemberModal('', '')"
+              class="px-5 py-3 rounded-2xl bg-coral-accent text-white hover:bg-coral-hover font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer">
+              <span data-i18n="addMemberBtn">+ އާ މެންބަރަކު އިތުރުކުރުން</span>
+            </button>
+            <button type="button" onclick="switchPage('home')"
+              class="px-4 py-3 rounded-2xl bg-white text-lagoon-deep hover:bg-lagoon-mist font-bold text-xs sm:text-sm cursor-pointer">
+              <span data-i18n="backHomeBtn">← މައި ސަފްޙާއަށް</span>
+            </button>
+          </div>
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-sand-dune text-lagoon-deep hover:bg-sand-gold/70 text-xs font-bold border border-sand-gold/80 transition-all cursor-pointer">
             <svg class="w-3.5 h-3.5 text-lagoon-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
