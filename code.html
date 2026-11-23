@@ -1252,20 +1252,23 @@
       if (familyExportBtn) familyExportBtn.textContent = t('exportJsonBtn');
 
       const familyModalSubtitle = document.getElementById('add-member-modal-subtitle');
-      if (familyModalSubtitle) familyModalSubtitle.textContent = t('familyModalSubtitle');
-      const familyHowToTitle = document.getElementById('family-how-to-title');
-      const familyHowToText = document.getElementById('family-how-to-text');
-      const familySelectedLegend = document.getElementById('family-selected-legend');
-      const familyRelatedLegend = document.getElementById('family-related-legend');
-      const familyOtherLegend = document.getElementById('family-other-legend');
-      if (familyHowToTitle) familyHowToTitle.textContent = t('familyHowToTitle');
-      if (familyHowToText) familyHowToText.textContent = t('familyHowToText');
-      if (familySelectedLegend) familySelectedLegend.textContent = t('familySelectedLegend');
-      if (familyRelatedLegend) familyRelatedLegend.textContent = t('familyRelatedLegend');
-      if (familyOtherLegend) familyOtherLegend.textContent = t('familyOtherLegend');
+      const canAddMembers = hasPortalPermission('family_submit');
 
-      const genderSelect = document.getElementById('fm-gender');
-      if (genderSelect) {
+      const addChildBtn = document.getElementById('pd-add-child-btn');
+      addChildBtn.classList.toggle('hidden', !canAddMembers);
+      addChildBtn.textContent = currentLang === 'en' ? '+ Add Child' : '+ ދަރިއަކު އިތުރުކުރުން';
+      addChildBtn.onclick = () => {
+        closePersonDetailModal();
+        openAddMemberModal(m.id, '');
+      };
+
+      const addSpouseBtn = document.getElementById('pd-add-spouse-btn');
+      addSpouseBtn.classList.toggle('hidden', !canAddMembers);
+      addSpouseBtn.textContent = currentLang === 'en' ? '+ Add Spouse' : '+ ބައިވެރިޔަކު އިތުރުކުރުން';
+      addSpouseBtn.onclick = () => {
+        closePersonDetailModal();
+        openAddMemberModal('', m.id);
+      };
         const selectedGender = genderSelect.value;
         genderSelect.innerHTML = isEn
           ? '<option value="male">Male</option><option value="female">Female</option>'
