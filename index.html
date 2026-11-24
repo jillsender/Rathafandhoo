@@ -867,7 +867,7 @@
           </div>
         </div>
 
-        <!-- Full Name (Required) & National ID Number (Optional) -->
+        <!-- Full Name & National ID Number -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="lbl-fm-name" class="block text-xs font-bold text-slate-700 mb-1">ފުރިހަމަ ނަން *</label>
@@ -882,7 +882,7 @@
           </div>
         </div>
 
-        <!-- House Name (Optional) & Gender -->
+        <!-- House Name & Gender (Optional) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="lbl-fm-house" class="block text-xs font-bold text-slate-700 mb-1">ގޭގެ ނަން (އިޚްތިޔާރީ)</label>
@@ -900,7 +900,7 @@
 
         <!-- Father, Mother & Spouse (All Required) -->
         <div class="rounded-2xl bg-sand-warm/80 p-3.5 border border-sand-gold/70 space-y-3">
-          <p id="lbl-fm-parents-heading" class="text-xs font-bold text-lagoon-deep">މައިންބަފައިންނާއި ބައިވެރިޔާގެ މަޢުލޫމާތު (ހުރިހާ ނަމެއް ފުރަންޖެހޭނެ *)</p>
+          <p id="lbl-fm-parents-heading" class="text-xs font-bold text-lagoon-deep">މައިންބަފައިންނާއި ބައިވެރިޔާގެ މަޢުލޫމާތު *</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label id="lbl-fm-father" class="block text-xs font-bold text-slate-700 mb-1">ބައްޕަގެ ނަން *</label>
@@ -924,19 +924,19 @@
           </div>
         </div>
 
-        <!-- Birth Year (Optional) & Permanent Address (Required if born 1984) -->
+        <!-- Birth Year (Optional) & Permanent Address (Required if 1984) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label id="lbl-fm-birth" class="block text-xs font-bold text-slate-700 mb-1">އުފަން އަހަރު (އިޚްތިޔާރީ)</label>
-            <input type="text" id="fm-birth-year" oninput="togglePermanentAddressRequirement()" placeholder="މިސާލު: 1984"
+            <input type="text" id="fm-birth-year" oninput="toggleAddressRequirementFor1984()" placeholder="މިސާލު: 1984"
               class="w-full rounded-2xl border border-sand-gold bg-sand-warm px-4 py-2.5 focus:outline-none focus:border-lagoon-teal" />
           </div>
           <div>
             <label id="lbl-fm-address" class="block text-xs font-bold text-slate-700 mb-1">
-              <span id="lbl-fm-address-text">ދާއިމީ އެޑްރެސް</span>
-              <span id="fm-address-required-star" class="hidden text-coral-accent"> *</span>
+              <span>ދާއިމީ އެޑްރެސް</span>
+              <span id="fm-address-req-star" class="hidden text-coral-accent font-bold"> * (1984 ގައި އުފަންވިނަމަ މަޖުބޫރު)</span>
             </label>
-            <input type="text" id="fm-permanent-address" placeholder="ދާއިމީ އެޑްރެސް..."
+            <input type="text" id="fm-permanent-address" placeholder="ދާއިމީ އެޑްރެސް ޖައްސަވާ..."
               class="w-full rounded-2xl border border-sand-gold bg-sand-warm px-4 py-2.5 focus:outline-none focus:border-lagoon-teal" />
           </div>
         </div>
@@ -956,17 +956,17 @@
     </div>
   </div>
 
-  <!-- 5. Person Detail Modal (Name Only + Actions) -->
+  <!-- 5. Person Detail Modal (Name + Action Buttons Only) -->
   <div id="person-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4" onclick="if(event.target === this) closePersonDetailModal()">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 border border-sand-gold shadow-xl space-y-5 modal-panel">
-      <div class="flex items-center justify-end">
-        <button type="button" onclick="closePersonDetailModal()" class="w-9 h-9 rounded-xl bg-sand-dune text-slate-700 hover:bg-coral-accent hover:text-white font-bold cursor-pointer">✕</button>
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div id="pd-avatar-wrap"></div>
+          <h3 id="pd-name" class="text-xl font-bold text-lagoon-deep truncate"></h3>
+        </div>
+        <button type="button" onclick="closePersonDetailModal()" class="w-9 h-9 rounded-xl bg-sand-dune text-slate-700 hover:bg-coral-accent hover:text-white font-bold cursor-pointer shrink-0">✕</button>
       </div>
-      <div class="flex items-center gap-4">
-        <div id="pd-avatar-wrap"></div>
-        <h3 id="pd-name" class="text-xl font-bold text-lagoon-deep"></h3>
-      </div>
-      <div class="flex flex-wrap gap-2 pt-2">
+      <div class="flex flex-wrap gap-2 pt-1">
         <button type="button" id="pd-add-child-btn" class="hidden flex-1 py-2.5 px-3 rounded-2xl bg-lagoon-deep text-white hover:bg-lagoon-teal text-xs font-bold cursor-pointer">
           + ދަރިއަކު އިތުރުކުރުން
         </button>
@@ -979,8 +979,7 @@
       </div>
     </div>
   </div>
-
-  <script>
+<script>
     // Small shared helpers. Keep user-supplied content as text wherever possible.
     function escapeHTML(value) {
       return String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -1078,7 +1077,7 @@
         mergeJsonBtn: 'JSON އެއްކުރުން',
         exportJsonBtn: 'JSON ޑައުންލޯޑް',
         importLegacyTreeBtn: 'އާއިލީ ގަހުގެ ކުރީގެ ޑޭޓާ އިމްޕޯޓްކުރޭ',
-        familyModalSubtitle: 'ހުރިހާ ނަމެއް ފުރަންޖެހޭނެ. ID ކާޑު ނަންބަރާއި އުފަން އަހަރަކީ އިޚްތިޔާރީ (1984 ގައި އުފަންވިނަމަ ދާއިމީ އެޑްރެސް ފުރަންޖެހޭނެ)',
+        familyModalSubtitle: 'ހުރިހާ ނަމެއް ފުރިހަމަކުރުން މަޖުބޫރު • އުފަން އަހަރަކީ 1984 ނަމަ ދާއިމީ އެޑްރެސް ފުރަންވާނެ',
         photoSourceUpload: 'އަޕްލޯޑް',
         photoSourceBrowse: 'ބެރައުޒް',
         photoSourceDrag: 'ޑްރެގް އެންޑް ޑްރޮޕް',
@@ -1178,7 +1177,7 @@
         mergeJsonBtn: 'Merge JSON',
         exportJsonBtn: 'Download JSON',
         importLegacyTreeBtn: 'Import legacy tree data',
-        familyModalSubtitle: 'All name fields are required. ID card number & born year are optional (Permanent Address required if born 1984)',
+        familyModalSubtitle: 'All name fields are required • Permanent address is required if born in 1984',
         photoSourceUpload: 'Upload',
         photoSourceBrowse: 'Browse',
         photoSourceDrag: 'Drag & Drop',
@@ -1215,26 +1214,17 @@
       return (i18nStrings[currentLang] && i18nStrings[currentLang][key]) || i18nStrings.dv[key] || key;
     }
 
-    function togglePermanentAddressRequirement() {
+    function toggleAddressRequirementFor1984() {
       const birthInput = document.getElementById('fm-birth-year');
-      const addrInput = document.getElementById('fm-permanent-address');
-      const addrStar = document.getElementById('fm-address-required-star');
-      const addrLabelText = document.getElementById('lbl-fm-address-text');
+      const addressInput = document.getElementById('fm-permanent-address');
+      const starEl = document.getElementById('fm-address-req-star');
       const is1984 = birthInput && String(birthInput.value).trim() === '1984';
-
-      if (addrInput) {
-        addrInput.required = is1984;
-        addrInput.placeholder = is1984
-          ? (currentLang === 'en' ? 'Permanent address (required for 1984)...' : 'ދާއިމީ އެޑްރެސް (1984 އަށް ކޮންމެހެން ބޭނުންވޭ)...')
-          : (currentLang === 'en' ? 'Enter permanent address...' : 'ދާއިމީ އެޑްރެސް...');
+      if (addressInput) {
+        addressInput.required = is1984;
       }
-      if (addrStar) {
-        addrStar.classList.toggle('hidden', !is1984);
-      }
-      if (addrLabelText) {
-        addrLabelText.textContent = is1984
-          ? (currentLang === 'en' ? 'Permanent Address (Required for 1984)' : 'ދާއިމީ އެޑްރެސް (1984 އަށް ކޮންމެހެން ބޭނުންވޭ)')
-          : (currentLang === 'en' ? 'Permanent Address (Optional)' : 'ދާއިމީ އެޑްރެސް (އިޚްތިޔާރީ)');
+      if (starEl) {
+        starEl.textContent = currentLang === 'en' ? ' * (Required for 1984)' : ' * (1984 ގައި އުފަންވިނަމަ މަޖުބޫރު)';
+        starEl.classList.toggle('hidden', !is1984);
       }
     }
 
@@ -1326,22 +1316,24 @@
       const motherInput = document.getElementById('fm-mother-name');
       const spouseInput = document.getElementById('fm-spouse-name');
       const birthInput = document.getElementById('fm-birth-year');
+      const addressInput = document.getElementById('fm-permanent-address');
       const bioInput = document.getElementById('fm-bio');
       if (nameInput) nameInput.placeholder = isEn ? 'Example: Mohamed Hussain' : 'މިސާލު: މުޙައްމަދު ޙުސައިން';
       if (nidInput) nidInput.placeholder = isEn ? 'Example: A123456 (Optional)' : 'މިސާލު: A123456';
       if (houseInput) houseInput.placeholder = isEn ? 'Example: Finifenmaa (Optional)' : 'މިސާލު: ފިނިފެންމާގެ';
-      if (fatherInput) fatherInput.placeholder = isEn ? 'Enter father name (required)...' : 'ބައްޕަގެ ނަން ޖައްސަވާ...';
-      if (motherInput) motherInput.placeholder = isEn ? 'Enter mother name (required)...' : 'މަންމަގެ ނަން ޖައްސަވާ...';
-      if (spouseInput) spouseInput.placeholder = isEn ? 'Enter spouse name (required)...' : 'ކައިވެނީގެ ބައިވެރިޔާގެ ނަން ޖައްސަވާ...';
+      if (fatherInput) fatherInput.placeholder = isEn ? 'Enter father name...' : 'ބައްޕަގެ ނަން ޖައްސަވާ...';
+      if (motherInput) motherInput.placeholder = isEn ? 'Enter mother name...' : 'މަންމަގެ ނަން ޖައްސަވާ...';
+      if (spouseInput) spouseInput.placeholder = isEn ? 'Enter spouse name...' : 'ކައިވެނީގެ ބައިވެރިޔާގެ ނަން ޖައްސަވާ...';
       if (birthInput) birthInput.placeholder = isEn ? 'Example: 1984 (Optional)' : 'މިސާލު: 1984';
-      if (bioInput) bioInput.placeholder = isEn ? 'Example: Teacher / Reef fisher (Optional)...' : 'މިސާލު: މުދައްރިސެއް / މަސްވެރިއެއް...';
+      if (addressInput) addressInput.placeholder = isEn ? 'Enter permanent address...' : 'ދާއިމީ އެޑްރެސް ޖައްސަވާ...';
+      if (bioInput) bioInput.placeholder = isEn ? 'Example: Teacher / Reef fisher...' : 'މިސާލު: މުދައްރިސެއް / މަސްވެރިއެއް...';
 
       const lblMap = {
         'lbl-fm-name': isEn ? 'Full Name *' : 'ފުރިހަމަ ނަން *',
-        'lbl-fm-nid': isEn ? 'ID Card No (Optional)' : 'އައި.ޑީ ކާޑު ނަންބަރު (އިޚްތިޔާރީ)',
+        'lbl-fm-nid': isEn ? 'ID Card Number (Optional)' : 'އައި.ޑީ ކާޑު ނަންބަރު (އިޚްތިޔާރީ)',
         'lbl-fm-house': isEn ? 'House Name (Optional)' : 'ގޭގެ ނަން (އިޚްތިޔާރީ)',
         'lbl-fm-gender': isEn ? 'Gender' : 'ޖިންސު',
-        'lbl-fm-parents-heading': isEn ? 'Family Links (All name fields are required *)' : 'މައިންބަފައިންނާއި ބައިވެރިޔާގެ މަޢުލޫމާތު (ހުރިހާ ނަމެއް ފުރަންޖެހޭނެ *)',
+        'lbl-fm-parents-heading': isEn ? 'Family Name Links (All Name Fields Required *)' : 'މައިންބަފައިންނާއި ބައިވެރިޔާގެ މަޢުލޫމާތު (ހުރިހާ ނަމެއް ފުރަންވާނެ *)',
         'lbl-fm-father': isEn ? 'Father Name *' : 'ބައްޕަގެ ނަން *',
         'lbl-fm-mother': isEn ? 'Mother Name *' : 'މަންމަގެ ނަން *',
         'lbl-fm-spouse': isEn ? 'Spouse Name (Husband / Wife) *' : 'އަނބިމީހާ / ފިރިމީހާ *',
@@ -1352,7 +1344,10 @@
         const el = document.getElementById(id);
         if (el) el.textContent = text;
       });
-      togglePermanentAddressRequirement();
+
+      const addrLabelSpan = document.querySelector('#lbl-fm-address > span:first-child');
+      if (addrLabelSpan) addrLabelSpan.textContent = isEn ? 'Permanent Address' : 'ދާއިމީ އެޑްރެސް';
+      toggleAddressRequirementFor1984();
 
       selectOverviewTab(activeOverviewTab);
       renderLatestNews();
@@ -2734,7 +2729,6 @@
       document.getElementById('fm-birth-year').value = '';
       document.getElementById('fm-permanent-address').value = '';
       document.getElementById('fm-bio').value = '';
-      togglePermanentAddressRequirement();
       clearMemberPhoto();
       document.getElementById('fm-photo-removed').value = 'false';
 
@@ -2758,6 +2752,8 @@
           document.getElementById('fm-spouse-name').value = spouseObj.name;
         }
       }
+
+      toggleAddressRequirementFor1984();
 
       const modal = document.getElementById('add-member-modal');
       modal.classList.remove('hidden');
@@ -2790,8 +2786,8 @@
       document.getElementById('fm-birth-year').value = member.birthYear || '';
       document.getElementById('fm-permanent-address').value = member.permanentAddress || '';
       document.getElementById('fm-bio').value = member.bio || '';
-      togglePermanentAddressRequirement();
 
+      toggleAddressRequirementFor1984();
       updateModalPhotoPreview(member.photo || '');
 
       const modal = document.getElementById('add-member-modal');
@@ -2831,10 +2827,8 @@
         return;
       }
 
-      // Automatically link edit ID so submitting merges into this existing record
       if (editIdInput) editIdInput.value = existing.id;
 
-      // Auto-fill fields if empty or overwrite with existing record's verified info while preserving any newly typed parent/spouse
       const nameEl = document.getElementById('fm-name');
       const houseEl = document.getElementById('fm-house');
       const genderEl = document.getElementById('fm-gender');
@@ -2842,7 +2836,7 @@
       const motherEl = document.getElementById('fm-mother-name');
       const spouseEl = document.getElementById('fm-spouse-name');
       const birthEl = document.getElementById('fm-birth-year');
-      const addrEl = document.getElementById('fm-permanent-address');
+      const addressEl = document.getElementById('fm-permanent-address');
       const bioEl = document.getElementById('fm-bio');
 
       if (nameEl && !nameEl.value.trim()) nameEl.value = existing.name || '';
@@ -2851,24 +2845,21 @@
       if (fatherEl && !fatherEl.value.trim() && existing.fatherName) fatherEl.value = existing.fatherName;
       if (motherEl && !motherEl.value.trim() && existing.motherName) motherEl.value = existing.motherName;
       if (spouseEl && !spouseEl.value.trim() && existing.spouseName) spouseEl.value = existing.spouseName;
-      if (birthEl && !birthEl.value.trim() && existing.birthYear) {
-        birthEl.value = existing.birthYear;
-        togglePermanentAddressRequirement();
-      }
-      if (addrEl && !addrEl.value.trim() && existing.permanentAddress) addrEl.value = existing.permanentAddress;
+      if (birthEl && !birthEl.value.trim() && existing.birthYear) birthEl.value = existing.birthYear;
+      if (addressEl && !addressEl.value.trim() && existing.permanentAddress) addressEl.value = existing.permanentAddress;
       if (bioEl && !bioEl.value.trim() && existing.bio) bioEl.value = existing.bio;
       if (existing.photo) updateModalPhotoPreview(existing.photo);
+      toggleAddressRequirementFor1984();
 
       if (banner) {
         banner.textContent = currentLang === 'en'
-          ? `Matched existing member: ${getLocalizedMemberName(existing)} — info auto-filled & will merge on save.`
-          : `މި ID އާ ދިމާވާ މެންބަރަކު ފެނިއްޖެ: ${existing.name} — މަޢުލޫމާތު އޮޓޯއިން ފުރި އެއްކުރެވޭނެ.`;
+          ? `Matched existing member: ${getLocalizedMemberName(existing)}${existing.house ? ` (${getLocalizedMemberHouse(existing)})` : ''} — info auto-filled & will merge on save.`
+          : `މި ID އާ ދިމާވާ މެންބަރަކު ފެނިއްޖެ: ${existing.name}${existing.house ? ` (${existing.house})` : ''} — މަޢުލޫމާތު އޮޓޯއިން ފުރި އެއްކުރެވޭނެ.`;
         banner.classList.remove('hidden');
       }
     }
 
     function recalculateAutoGenerations() {
-      // 1. Link any unlinked fatherName, motherName, or spouseName to matching records by name
       familyMembers.forEach(m => {
         if (!m.fatherId && m.fatherName) {
           const f = familyMembers.find(x => x.id !== m.id && x.name.trim().toLowerCase() === m.fatherName.trim().toLowerCase());
@@ -2893,7 +2884,6 @@
         }
       });
 
-      // 2. Compute depth for root members (those with no known parents in the tree)
       const genMap = new Map();
       familyMembers.forEach(m => {
         const hasParent = Boolean(m.fatherId || m.motherId || m.parentId);
@@ -2906,7 +2896,6 @@
         }
       });
 
-      // 3. Propagate generations iteratively: children = max(parentGen) + 1, spouses = same tier
       for (let pass = 0; pass < 12; pass++) {
         let changed = false;
         familyMembers.forEach(m => {
@@ -2926,7 +2915,6 @@
           }
         });
 
-        // Synchronize spouses to the exact same tier
         familyMembers.forEach(m => {
           if (m.spouseId) {
             const g1 = genMap.get(m.id);
@@ -2978,15 +2966,16 @@
       if (!name || !fatherName || !motherName || !spouseName) {
         showToast(currentLang === 'en'
           ? 'Please fill in Full Name, Father Name, Mother Name, and Spouse Name.'
-          : 'ފުރިހަމަ ނަން، ބައްޕަގެ ނަން، މަންމަގެ ނަން އަދި ބައިވެރިޔާގެ ނަން ފުރާލައްވާ.');
+          : 'ފުރިހަމަ ނަން، ބައްޕަގެ ނަން، މަންމަގެ ނަން އަދި ބައިވެރިޔާގެ ނަން ފުރިހަމަކުރައްވާ.');
         return;
       }
 
       if (birthYear === '1984' && !permanentAddress) {
-        showToast(currentLang === 'en'
-          ? 'Permanent Address is required for members born in 1984.'
-          : '1984 ގައި އުފަންވި މެންބަރުންނަށް ދާއިމީ އެޑްރެސް ފުރަންޖެހޭނެ.');
+        toggleAddressRequirementFor1984();
         document.getElementById('fm-permanent-address').focus();
+        showToast(currentLang === 'en'
+          ? 'Permanent address is required for anyone born in 1984.'
+          : '1984 ގައި އުފަންވި ބޭފުޅުންނަށް ދާއިމީ އެޑްރެސް ފުރުން މަޖުބޫރު.');
         return;
       }
 
@@ -3000,7 +2989,6 @@
       const spouseId = matchedSpouse ? matchedSpouse.id : '';
       const primaryParentId = fatherId || motherId || '';
 
-      // Always prioritize matching by National ID first so existing records merge cleanly
       let targetId = editId;
       let wasCombined = false;
       const existingByNid = nationalId ? findMemberByNameOrId('', nationalId) : null;
@@ -3050,7 +3038,6 @@
             photo: photo || (photoRemoved ? '' : prev.photo || '')
           };
 
-          // Sync bidirectional spouse link
           if (spouseId) {
             const sp = familyMembers.find(m => m.id === spouseId);
             if (sp) {
@@ -3059,7 +3046,6 @@
             }
           }
 
-          // Update any children referencing this member's name so all branches stay connected
           familyMembers.forEach(child => {
             if (child.fatherId === targetId) child.fatherName = mergedName;
             if (child.motherId === targetId) child.motherName = mergedName;
@@ -3125,13 +3111,16 @@
       if (!m) return;
 
       const avatarWrap = document.getElementById('pd-avatar-wrap');
-      avatarWrap.innerHTML = renderMemberAvatarHTML(m, 'w-16 h-16 text-base');
-      const photo = avatarWrap.querySelector('img');
-      if (photo) {
-        photo.dataset.familyPhoto = 'true';
-        photo.classList.add('cursor-zoom-in');
+      if (avatarWrap) {
+        avatarWrap.innerHTML = renderMemberAvatarHTML(m, 'w-16 h-16 text-base');
+        const photo = avatarWrap.querySelector('img');
+        if (photo) {
+          photo.dataset.familyPhoto = 'true';
+          photo.classList.add('cursor-zoom-in');
+        }
       }
-      document.getElementById('pd-name').textContent = getLocalizedMemberName(m);
+      const nameEl = document.getElementById('pd-name');
+      if (nameEl) nameEl.textContent = getLocalizedMemberName(m);
 
       const canAddMembers = hasPortalPermission('family_submit');
 
@@ -3363,4 +3352,1083 @@
         const missingProfilesTable = error.code === 'PGRST205'
           || /could not find the table|relation .*profiles.* does not exist/i.test(error.message);
         showToast(missingProfilesTable
-          ?
+          ? (currentLang === 'en'
+            ? `Supabase cannot find public.profiles (${error.code || 'no error code'}): ${error.message}. Check that this SQL ran in project kxaqurntpjvpecodgoxf.`
+            : `Supabase އަށް public.profiles ނުފެނޭ (${error.code || 'no error code'}): ${error.message}`)
+          : error.message);
+        return false;
+      }
+      if (!data) {
+        setCurrentPortalProfile(null);
+        showToast(currentLang === 'en'
+          ? 'Your account profile is missing. Please contact the administrator.'
+          : 'ތިޔަބޭފުޅާގެ ޕްރޮފައިލް ނެތް. އެޑްމިންއާ ގުޅުއްވާ.');
+        return false;
+      }
+      setCurrentPortalProfile(data);
+      return true;
+    }
+
+    function updateSessionUI() {
+      const navLabel = document.getElementById('nav-portal-label');
+      const mobLabel = document.getElementById('mobile-portal-label');
+      updateFamilyEditControls();
+      if (!currentPortalRole) {
+        if (navLabel) navLabel.textContent = t('navPortal');
+        if (mobLabel) mobLabel.textContent = t('navPortalShort');
+        return;
+      }
+
+      const roleLabel = getPortalRoleLabel(currentPortalRole);
+      if (navLabel) {
+        navLabel.textContent = currentPortalRole === 'admin'
+          ? (currentLang === 'en' ? 'Admin Dashboard' : 'އެޑްމިން ޕޯޓަލް')
+          : currentPortalRole === 'user'
+            ? (currentLang === 'en' ? 'User Portal' : 'ޔޫޒަރ ޕޯޓަލް')
+            : roleLabel;
+      }
+      if (mobLabel) {
+        mobLabel.textContent = currentPortalRole === 'admin'
+          ? (currentLang === 'en' ? 'Admin' : 'އެޑްމިން')
+          : currentPortalRole === 'user'
+            ? (currentLang === 'en' ? 'User' : 'ޔޫޒަރު')
+            : roleLabel;
+      }
+    }
+
+    function updateFamilyEditControls() {
+      const adminTools = document.getElementById('family-admin-tools');
+      const canManageFamily = hasPortalPermission('family');
+      const isAdmin = hasPortalPermission('manage_users');
+      if (adminTools) adminTools.classList.toggle('hidden', !canManageFamily);
+      const exportButton = document.getElementById('family-export-json-btn');
+      if (exportButton) exportButton.classList.toggle('hidden', !isAdmin);
+      const importJsonLabel = document.getElementById('family-import-json-label');
+      if (importJsonLabel) importJsonLabel.classList.toggle('hidden', !isAdmin);
+      const legacyImportButton = document.getElementById('family-import-legacy-btn');
+      if (legacyImportButton) legacyImportButton.classList.toggle('hidden', !isAdmin || !legacyFamilyBackup || !legacyFamilyBackup.length);
+
+      const canAddMembers = hasPortalPermission('family_submit');
+      ['pd-add-child-btn', 'pd-add-spouse-btn'].forEach(id => {
+        const button = document.getElementById(id);
+        if (button) button.classList.toggle('hidden', !canAddMembers);
+      });
+    }
+
+    function handlePortalNavClick() {
+      switchPage('portal');
+    }
+
+    function setPortalAuthMode(mode) {
+      portalAuthMode = ['signup', 'verify-phone', 'reset-request', 'reset-password'].includes(mode) ? mode : 'login';
+      const isSignup = portalAuthMode === 'signup';
+      const isPhoneVerification = portalAuthMode === 'verify-phone';
+      const isResetRequest = portalAuthMode === 'reset-request';
+      const isResetPassword = portalAuthMode === 'reset-password';
+      const isLogin = portalAuthMode === 'login';
+      const signupFields = document.getElementById('portal-signup-fields');
+      const loginId = document.getElementById('portal-auth-id');
+      const phoneVerification = document.getElementById('portal-phone-verification');
+      const passwordResetRequest = document.getElementById('portal-password-reset-request');
+      const passwordResetForm = document.getElementById('portal-password-reset-form');
+      const forgotPassword = document.getElementById('portal-forgot-password');
+      const title = document.getElementById('portal-auth-title');
+      const submit = document.getElementById('portal-auth-submit');
+      const toggle = document.getElementById('portal-auth-toggle');
+      const password = document.getElementById('portal-auth-password');
+      if (signupFields) signupFields.classList.toggle('hidden', !isSignup);
+      if (signupFields) {
+        signupFields.querySelectorAll('input, select').forEach(input => {
+          input.disabled = !isSignup;
+        });
+      }
+      if (loginId) {
+        loginId.disabled = !isLogin;
+        loginId.required = isLogin;
+        loginId.classList.toggle('hidden', !isLogin);
+      }
+      if (phoneVerification) phoneVerification.classList.toggle('hidden', !isPhoneVerification);
+      if (passwordResetRequest) passwordResetRequest.classList.toggle('hidden', !isResetRequest);
+      if (passwordResetForm) passwordResetForm.classList.toggle('hidden', !isResetPassword);
+      if (forgotPassword) forgotPassword.classList.toggle('hidden', !isLogin);
+      if (password) {
+        const passwordNotNeeded = isPhoneVerification || isResetRequest || isResetPassword;
+        password.disabled = passwordNotNeeded;
+        password.required = !passwordNotNeeded;
+        password.classList.toggle('hidden', passwordNotNeeded);
+        password.autocomplete = isSignup ? 'new-password' : 'current-password';
+      }
+      if (submit) submit.classList.toggle('hidden', !isLogin && !isSignup);
+      if (toggle) toggle.classList.toggle('hidden', !isLogin && !isSignup);
+      if (title) title.textContent = isSignup
+        ? (currentLang === 'en' ? 'Create your account' : 'އެކައުންޓެއް ހަދާ')
+        : isPhoneVerification
+          ? (currentLang === 'en' ? 'Verify your phone' : 'ފޯން ވެރިފައިކުރޭ')
+          : isResetRequest
+            ? (currentLang === 'en' ? 'Reset your password' : 'ޕާސްވޯޑް ރިސެޓްކުރޭ')
+            : isResetPassword
+              ? (currentLang === 'en' ? 'Choose a new password' : 'އާ ޕާސްވޯޑެއް ނިންމާ')
+              : (currentLang === 'en' ? 'Sign in' : 'ލޮގިންވާ');
+      if (submit) submit.textContent = isSignup
+        ? (currentLang === 'en' ? 'Create Account' : 'އެކައުންޓް ހަދާ')
+        : (currentLang === 'en' ? 'Sign In' : 'ލޮގިންވާ');
+      if (toggle) toggle.textContent = isSignup
+        ? (currentLang === 'en' ? 'Already have an account? Sign in' : 'އެކައުންޓެއް އޮތްތަ؟ ލޮގިންވާ')
+        : (currentLang === 'en' ? 'New here? Create an account' : 'އާ މެންބަރެއްތަ؟ އެކައުންޓެއް ހަދާ');
+      if (isSignup) updateSignupVerificationMethod();
+    }
+
+    function togglePortalAuthMode() {
+      setPortalAuthMode(portalAuthMode === 'login' ? 'signup' : 'login');
+    }
+
+    function getConfirmationRedirectURL() {
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        return window.location.href.split('#')[0];
+      }
+      return undefined;
+    }
+
+    function normalizePhoneNumber(phone) {
+      return phone.trim().replace(/[()\s-]/g, '');
+    }
+
+    function updateSignupVerificationMethod() {
+      const method = document.getElementById('portal-signup-verification')?.value || 'email';
+      const emailInput = document.getElementById('portal-signup-email');
+      const emailField = document.getElementById('portal-signup-email-field');
+      const phoneInput = document.getElementById('portal-signup-phone');
+      const smsNote = document.getElementById('portal-sms-verification-note');
+      const useSms = method === 'sms';
+      if (emailInput) emailInput.disabled = useSms;
+      if (emailField) emailField.classList.toggle('hidden', useSms);
+      if (smsNote) smsNote.classList.toggle('hidden', !useSms);
+      if (phoneInput) {
+        phoneInput.placeholder = useSms
+          ? (currentLang === 'en' ? 'Phone for SMS (include country code, e.g. +960...)' : 'SMS ފޯން (ކަންޓްރީ ކޯޑާއެކު، މިސާލު +960...)')
+          : (currentLang === 'en' ? 'Contact number' : 'ގުޅޭނެ ނަންބަރު');
+      }
+    }
+
+    function showAuthError(error) {
+      const message = error && error.message ? error.message : String(error);
+      if (/email rate limit exceeded|over_email_send_rate_limit/i.test(message)) {
+        showToast(currentLang === 'en'
+          ? 'Supabase has temporarily limited confirmation emails. Stop retrying and wait for the email limit to reset. If the account was created, use Resend confirmation email. Configure custom SMTP in Supabase for reliable delivery.'
+          : 'Supabase އިން ކޮންފާމޭޝަން އީމެއިލް މަވާގައި މަދުކޮށްފި. އަލުން އަލުން ޓްރައިކޮށް ނުބަލާ، ލިމިޓް ރިސެޓްވާންދެން މަޑުކުރޭ. އެކައުންޓް ހެދިފައިވާނަމަ Resend confirmation email ބޭނުންކުރޭ. އީމެއިލް ރަނގަޅަށް ފޮނުވުމަށް Supabase އިން custom SMTP ސެޓްކުރޭ.');
+        return;
+      }
+      if (/sms.*(rate|limit)|(?:rate|limit).*sms|phone.*rate limit/i.test(message)) {
+        showToast(currentLang === 'en'
+          ? 'Supabase is limiting SMS messages. Wait before retrying and make sure an SMS provider is configured in Supabase.'
+          : 'Supabase އިން SMS މެސެޖް މަދުކޮށްފި. އަލުން ޓްރައިކްކުރާންދެން މަޑުކޮށް Supabase ގައި SMS ޕްރޮވައިޑަރެއް ސެޓްކުރޭ.');
+        return;
+      }
+      if (/phone.*sign.?up.*(?:disabled|not enabled)|phone_signup_disabled|phone_provider_disabled/i.test(message)) {
+        showToast(currentLang === 'en'
+          ? 'Phone signup is disabled in Supabase. Choose email signup, or enable Phone signups and configure an SMS provider in Supabase Auth.'
+          : 'Supabase ގައި ފޯން ސައިންއަޕް ނުހުޅުވިދާ. އީމެއިލް ސައިންއަޕް ނަންގަވާ، ނުވަތަ Supabase Auth ގައި Phone signups ހުޅުވައި SMS ޕްރޮވައިޑަރެއް ސެޓްކުރޭ.');
+        return;
+      }
+      showToast(message);
+    }
+
+    async function resendConfirmationEmail() {
+      if (!supabaseClient) {
+        showToast(currentLang === 'en' ? 'Account service is unavailable.' : 'އެކައުންޓް ޚިދުމަތް ހުރިހެން ނުވޭ.');
+        return;
+      }
+      const email = (document.getElementById('portal-resend-email')?.value || '').trim().toLowerCase();
+      if (!email) {
+        showToast(currentLang === 'en' ? 'Enter your email address first.' : 'ފުރަތަމަ ތިޔަ އީމެއިލް އެޑްރެސް ލިޔާ.');
+        return;
+      }
+      const redirectTo = getConfirmationRedirectURL();
+      const resendOptions = redirectTo ? { emailRedirectTo: redirectTo } : undefined;
+      const { error } = await supabaseClient.auth.resend({
+        type: 'signup',
+        email,
+        ...(resendOptions ? { options: resendOptions } : {})
+      });
+      if (error) {
+        showAuthError(error);
+        return;
+      }
+      showToast(currentLang === 'en'
+        ? 'A confirmation email has been sent again. Check your inbox and spam folder.'
+        : 'ކޮންފާމޭޝަން އީމެއިލް އަލުން ފޮނުވިއްޖެ. އިންބޮކްސް އަދި ސްޕޭމް ފޯލްޑަރް ބަލާ.');
+    }
+
+    async function resendSmsConfirmation() {
+      if (!supabaseClient) {
+        showToast(currentLang === 'en' ? 'Account service is unavailable.' : 'އެކައުންޓް ޚިދުމަތް ހުރިހެން ނުވޭ.');
+        return;
+      }
+      const phoneInput = document.getElementById('portal-resend-phone');
+      const phone = pendingPhoneVerification || normalizePhoneNumber(phoneInput?.value || '');
+      if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+        showToast(currentLang === 'en'
+          ? 'Enter a valid phone number with country code, such as +960...'
+          : 'ކަންޓްރީ ކޯޑާއެކު ރަނގަޅު ފޯން ނަންބަރެއް ލިޔާ، މިސާލު +960...');
+        return;
+      }
+      const { error } = await supabaseClient.auth.resend({ type: 'sms', phone });
+      if (error) {
+        showAuthError(error);
+        return;
+      }
+      pendingPhoneVerification = phone;
+      const otpInput = document.getElementById('portal-phone-otp');
+      if (otpInput) otpInput.value = '';
+      setPortalAuthMode('verify-phone');
+      showToast(currentLang === 'en'
+        ? 'A verification code was sent by SMS.'
+        : 'ވެރިފައިކުރުމުގެ ކޯޑު SMS އިން ފޮނުވިއްޖެ.');
+    }
+
+    function openPasswordResetRequest() {
+      const emailInput = document.getElementById('portal-reset-email');
+      const signupEmail = document.getElementById('portal-signup-email')?.value || '';
+      const resendEmail = document.getElementById('portal-resend-email')?.value || '';
+      if (emailInput) emailInput.value = signupEmail || resendEmail;
+      setPortalAuthMode('reset-request');
+    }
+
+    function cancelPasswordResetRequest() {
+      setPortalAuthMode('login');
+    }
+
+    async function sendPasswordResetEmail() {
+      if (!supabaseClient) {
+        showToast(currentLang === 'en' ? 'Account service is unavailable.' : 'އެކައުންޓް ޚިދުމަތް ހުރިހެން ނުވޭ.');
+        return;
+      }
+      const email = (document.getElementById('portal-reset-email')?.value || '').trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast(currentLang === 'en' ? 'Enter a valid account email address.' : 'އެކައުންޓްގެ ރަނގަޅު އީމެއިލް އެޑްރެހެއް ލިޔާ.');
+        return;
+      }
+      const redirectTo = getConfirmationRedirectURL();
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        ...(redirectTo ? { redirectTo } : {})
+      });
+      if (error) {
+        showAuthError(error);
+        return;
+      }
+      showToast(currentLang === 'en'
+        ? 'If that email belongs to an account, password reset instructions have been sent.'
+        : 'އެ އީމެއިލް އެކައުންޓަކަށް ގުޅޭނަމަ ޕާސްވޯޑް ރިސެޓް އިންސްޓްރަކްޝަން ފޮނުވިފައިވާނެ.');
+    }
+
+    async function submitPortalPasswordReset() {
+      if (!supabaseClient || !pendingPasswordRecovery) {
+        showToast(currentLang === 'en'
+          ? 'Open the password reset link from your email first.'
+          : 'ފުރަތަމަ އީމެއިލްގައި ލިބުނު ޕާސްވޯޑް ރިސެޓް ލިންކް ހުޅުވާ.');
+        return;
+      }
+      const newPassword = document.getElementById('portal-new-password')?.value || '';
+      const confirmPassword = document.getElementById('portal-confirm-password')?.value || '';
+      if (newPassword.length < 8) {
+        showToast(currentLang === 'en' ? 'Use at least 8 characters for your new password.' : 'އާ ޕާސްވޯޑަށް އަކުރު 8 ނުވަތަ އެއަށްވުރެ ގިނަ ބޭނުންކުރޭ.');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showToast(currentLang === 'en' ? 'The passwords do not match.' : 'ދެ ޕާސްވޯޑް އެއްގޮތެއް ނުވޭ.');
+        return;
+      }
+      const { data, error } = await supabaseClient.auth.updateUser({ password: newPassword });
+      if (error) {
+        showAuthError(error);
+        return;
+      }
+      pendingPasswordRecovery = false;
+      window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+      if (!data.user || !await refreshCurrentProfile(data.user.id)) return;
+      await loadFamilyData();
+      switchPage('portal');
+      showToast(currentLang === 'en' ? 'Your password has been reset.' : 'ތިޔަގެ ޕާސްވޯޑް ރިސެޓްވެއްޖެ.');
+    }
+
+    async function cancelPasswordRecovery() {
+      if (supabaseClient) {
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) {
+          showToast(error.message);
+          return;
+        }
+      }
+      pendingPasswordRecovery = false;
+      setCurrentPortalProfile(null);
+      setPortalAuthMode('login');
+    }
+
+    async function verifyPortalPhoneOtp() {
+      if (!supabaseClient || !pendingPhoneVerification) {
+        showToast(currentLang === 'en' ? 'Start phone verification by creating an account.' : 'އެކައުންޓެއް ހަދައި ފޯން ވެރިފައިކުރަން ފަށާ.');
+        return;
+      }
+      const token = (document.getElementById('portal-phone-otp')?.value || '').trim();
+      if (!/^\d{4,10}$/.test(token)) {
+        showToast(currentLang === 'en' ? 'Enter the verification code from your SMS.' : 'SMS އިން ލިބުނު ވެރިފައިކުރުމުގެ ކޯޑު ލިޔާ.');
+        return;
+      }
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        phone: pendingPhoneVerification,
+        token,
+        type: 'sms'
+      });
+      if (error) {
+        showAuthError(error);
+        return;
+      }
+      if (!data.user) {
+        showToast(currentLang === 'en' ? 'Phone verification returned no user account.' : 'ފޯން ވެރިފައިކުރުމުން ޔޫޒަރ އެކައުންޓެއް ނުލިބުނު.');
+        return;
+      }
+      pendingPhoneVerification = '';
+      if (!await refreshCurrentProfile(data.user.id)) return;
+      await loadFamilyData();
+      switchPage('portal');
+      showToast(currentLang === 'en' ? 'Phone confirmed. Your account is ready.' : 'ފޯން ވެރިފައިވެއްޖެ. އެކައުންޓް ހަދައިފި.');
+    }
+
+    function cancelPhoneVerification() {
+      const phoneInput = document.getElementById('portal-resend-phone');
+      if (phoneInput && pendingPhoneVerification) phoneInput.value = pendingPhoneVerification;
+      pendingPhoneVerification = '';
+      setPortalAuthMode('login');
+    }
+
+    async function handlePortalAuthSubmit(event) {
+      event.preventDefault();
+      if (!supabaseClient) {
+        showToast(currentLang === 'en' ? 'Account service is unavailable.' : 'އެކައުންޓް ޚިދުމަތް ހުރިހެން ނުވޭ.');
+        return;
+      }
+      const password = document.getElementById('portal-auth-password')?.value || '';
+      if (portalAuthMode === 'signup') {
+        const verificationMethod = document.getElementById('portal-signup-verification')?.value || 'email';
+        const useSms = verificationMethod === 'sms';
+        const email = (document.getElementById('portal-signup-email')?.value || '').trim().toLowerCase();
+        const idCardNumber = (document.getElementById('portal-signup-id')?.value || '').trim().toUpperCase().replace(/^A-/, 'A');
+        const fullName = (document.getElementById('portal-signup-name')?.value || '').trim();
+        const contactNumberInput = (document.getElementById('portal-signup-phone')?.value || '').trim();
+        const contactNumber = useSms ? normalizePhoneNumber(contactNumberInput) : contactNumberInput;
+        const island = (document.getElementById('portal-signup-island')?.value || '').trim();
+        const permanentAddress = (document.getElementById('portal-signup-address')?.value || '').trim();
+        if ((!useSms && !email) || !fullName || !contactNumber || !island || !permanentAddress) {
+          showToast(currentLang === 'en' ? 'Complete all profile fields to create your account.' : 'އެކައުންޓް ހަދާނަމަ ހުރިހާ ޕްރޮފައިލް ފީލްޑުތައް ފުރާލާ.');
+          return;
+        }
+        if (!useSms && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showToast(currentLang === 'en' ? 'Enter a valid email address.' : 'ރަނގަޅު އީމެއިލް އެޑްރެހެއް ލިޔާ.');
+          return;
+        }
+        if (useSms && !/^\+[1-9]\d{7,14}$/.test(contactNumber)) {
+          showToast(currentLang === 'en'
+            ? 'For SMS verification, enter a valid phone number with country code, such as +960...'
+            : 'SMS ވެރިފައިކުރުމަށް ކަންޓްރީ ކޯޑާއެކު ރަނގަޅު ފޯން ނަންބަރެއް ލިޔާ، މިސާލު +960...');
+          return;
+        }
+        if (!/^A[A-Z0-9][A-Z0-9-]*$/.test(idCardNumber)) {
+          showToast(currentLang === 'en'
+            ? 'Enter a valid ID card number starting with A.'
+            : 'A އިން ފެށޭ ރަނގަޅު އައިޑީ ކާޑު ނަންބަރެއް ލިޔާ.');
+          return;
+        }
+        const userMetadata = {
+          full_name: fullName,
+          id_card_number: idCardNumber,
+          contact_number: contactNumber,
+          island,
+          permanent_address: permanentAddress
+        };
+        const { data, error } = useSms
+          ? await supabaseClient.auth.signUp({
+            phone: contactNumber,
+            password,
+            options: { data: userMetadata }
+          })
+          : await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+              ...(getConfirmationRedirectURL()
+                ? { emailRedirectTo: getConfirmationRedirectURL() }
+                : {}),
+              data: userMetadata
+            }
+          });
+        if (error) {
+          if (!useSms && /email rate limit exceeded|over_email_send_rate_limit/i.test(error.message || '')) {
+            const resendEmail = document.getElementById('portal-resend-email');
+            if (resendEmail) resendEmail.value = email;
+            setPortalAuthMode('login');
+          }
+          showAuthError(error);
+          return;
+        }
+        if (!data.session) {
+          if (useSms) {
+            pendingPhoneVerification = contactNumber;
+            const otpInput = document.getElementById('portal-phone-otp');
+            if (otpInput) otpInput.value = '';
+            setPortalAuthMode('verify-phone');
+            showToast(currentLang === 'en'
+              ? 'Account created. Enter the verification code sent by SMS.'
+              : 'އެކައުންޓް ހެދިއްޖެ. SMS އިން ފޮނުވި ކޯޑު ލިޔާ.');
+          } else {
+            const resendEmail = document.getElementById('portal-resend-email');
+            if (resendEmail) resendEmail.value = email;
+            setPortalAuthMode('login');
+            showToast(currentLang === 'en'
+              ? 'Account created. Check your email to confirm it, then sign in.'
+              : 'އެކައުންޓް ހެދުން. އީމެއިލް ކޮންފާމްކޮށްފައި ލޮގިންވާ.');
+          }
+          return;
+        }
+        if (!await refreshCurrentProfile(data.user.id)) return;
+        await loadFamilyData();
+        switchPage('portal');
+        showToast(currentLang === 'en' ? 'Account created and signed in.' : 'އެކައުންޓް ހެދި ލޮގިންވެވިއްޖެ.');
+        return;
+      }
+
+      const idCardNumber = (document.getElementById('portal-auth-id')?.value || '').trim().toUpperCase().replace(/^A-/, 'A');
+      if (!/^A[A-Z0-9][A-Z0-9-]*$/.test(idCardNumber)) {
+        showToast(currentLang === 'en'
+          ? 'Enter a valid ID card number starting with A.'
+          : 'A އިން ފެށޭ ރަނގަޅު އައިޑީ ކާޑު ނަންބަރެއް ލިޔާ.');
+        return;
+      }
+      const { data: loginData, error } = await supabaseClient.functions.invoke('login-with-id', {
+        body: { idCardNumber, password }
+      });
+      if (error) {
+        if (/failed to send a request to the edge function|failed to fetch|networkerror/i.test(error.message || '')) {
+          showToast(currentLang === 'en'
+            ? 'Could not reach the ID sign-in service. Deploy login-with-id to this Supabase project and check its URL and CORS settings.'
+            : 'ID ސައިންއިން ޚިދުމަތާ ގުޅޭން ނުފެނުނު. މި Supabase project އަށް login-with-id ޑިޕްލޯކޮށް URL އާއި CORS ސެޓިންގްތައް ބަލާ.');
+          return;
+        }
+        const responseStatus = error.context && Number.isInteger(error.context.status)
+          ? error.context.status
+          : 0;
+        let errorMessage = error.message;
+        if (error.context && typeof error.context.json === 'function') {
+          try {
+            const responseBody = await error.context.json();
+            if (responseBody && typeof responseBody.error === 'string') {
+              errorMessage = responseBody.error;
+            } else if (responseBody && typeof responseBody.message === 'string') {
+              errorMessage = responseBody.message;
+            }
+          } catch (parseError) {
+            console.warn('Could not read the ID sign-in error response.', parseError);
+          }
+        }
+        if (responseStatus === 404) {
+          showToast(currentLang === 'en'
+            ? 'The ID sign-in Edge Function was not found. Deploy login-with-id to your Supabase project.'
+            : 'ID ސައިންއިން Edge Function ނުފެނުނު. Supabase project އަށް login-with-id ޑިޕްލޯކުރޭ.');
+          return;
+        }
+        showToast(errorMessage);
+        return;
+      }
+      if (!loginData || !loginData.access_token || !loginData.refresh_token) {
+        showToast(currentLang === 'en' ? 'ID sign-in service returned an invalid response.' : 'އައިޑީ ލޮގިން ޚިދުމަތުން ނުރަނގަޅު ޖަވާބެއް ދިން.');
+        return;
+      }
+      const { data, error: sessionError } = await supabaseClient.auth.setSession({
+        access_token: loginData.access_token,
+        refresh_token: loginData.refresh_token
+      });
+      if (sessionError) {
+        showToast(sessionError.message);
+        return;
+      }
+      if (!data.user) {
+        showToast(currentLang === 'en' ? 'ID sign-in returned no user account.' : 'އައިޑީ ލޮގިންގައި ޔޫޒަރ އެކައުންޓެއް ނުލިބުނު.');
+        return;
+      }
+      pendingPhoneVerification = '';
+      if (!await refreshCurrentProfile(data.user.id)) return;
+      await loadFamilyData();
+      switchPage('portal');
+      showToast(currentLang === 'en' ? `Welcome, ${currentPortalUserName}!` : `މަރުޙަބާ، ${currentPortalUserName}!`);
+    }
+
+    async function logoutPortal() {
+      if (!supabaseClient) return;
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      setCurrentPortalProfile(null);
+      await loadFamilyData();
+      switchPage('portal');
+      showToast(currentLang === 'en' ? 'Logged out' : 'ލޮގްއައުޓް ވެއްޖެ');
+    }
+
+    function renderPortalDashboard() {
+      const body = document.getElementById('portal-dashboard-body');
+      const badge = document.getElementById('portal-workspace-badge');
+      const title = document.getElementById('portal-workspace-title');
+      const description = document.getElementById('portal-workspace-desc');
+      const logoutButton = document.getElementById('portal-logout-btn');
+      if (!body) return;
+
+      const isLoggedIn = Boolean(currentPortalRole);
+      const canManageFamily = hasPortalPermission('family');
+      const isAdmin = hasPortalPermission('manage_users');
+      const canPublishNews = hasPortalPermission('publish_news');
+      if (logoutButton) logoutButton.classList.toggle('hidden', !isLoggedIn);
+      if (badge) badge.textContent = !isLoggedIn ? (currentLang === 'en' ? 'LOGIN' : 'ލޮގިން') : `${getPortalRoleLabel(currentPortalRole).toUpperCase()} PORTAL`;
+      if (description) {
+        description.textContent = !isLoggedIn
+          ? (currentLang === 'en' ? 'Sign in to register family members or review submissions.' : 'އާއިލީ މެންބަރުން ރަޖިސްޓަރީކުރުމާއި ހުށަހެޅުންތައް ބަލާލުމަށް ލޮގިންވާށެވެ.')
+          : isAdmin
+            ? (currentLang === 'en' ? 'Invite users, assign access, and manage the portal.' : 'ޔޫޒަރުން އިންވައިޓްކޮށް ހުއްދަ ބެލުން.')
+            : canManageFamily
+              ? (currentLang === 'en' ? 'Review and manage Family Tree records.' : 'އާއިލީ ގަހުގެ ރެކޯޑުތައް ބަލާލުމާއި ބެލުން.')
+              : canPublishNews
+                ? (currentLang === 'en' ? 'Write and publish island news and announcements.' : 'ރަށުގެ ޚަބަރާއި އިޢުލާންތައް ލިޔެ ޝާއިޢުކުރުން.')
+                : (currentLang === 'en' ? 'Register family members for review.' : 'އާއިލީ މެންބަރުން ރަޖިސްޓަރީކޮށް ބަލާލުމަށް ފޮނުވުން.');
+      }
+      if (title) {
+        title.textContent = !isLoggedIn
+          ? (currentLang === 'en' ? 'Sign in to Rathafandhoo Portal' : 'ރަތަފަންދޫ ޕޯޓަލްއަށް ލޮގިންވާ')
+          : isAdmin
+            ? (currentLang === 'en' ? 'Portal Administration' : 'ޕޯޓަލް އެޑްމިން')
+            : canManageFamily
+              ? (currentLang === 'en' ? 'Family Tree Editor' : 'އާއިލީ ގަހުގެ އެޑިޓަރ')
+              : canPublishNews
+                ? (currentLang === 'en' ? 'Content Workspace' : 'ކޮންޓެންޓް ވޯކްސްޕޭސް')
+                : (currentLang === 'en' ? `Welcome, ${currentPortalUserName}` : `މަރުޙަބާ، ${currentPortalUserName}`);
+      }
+
+      if (!isLoggedIn) {
+        body.innerHTML = `
+          <div class="max-w-xl mx-auto">
+            <section class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-gold shadow-sm space-y-5">
+              <h3 id="portal-auth-title" class="text-xl font-bold text-lagoon-deep"></h3>
+              <form onsubmit="handlePortalAuthSubmit(event)" class="space-y-3">
+                <div id="portal-signup-fields" class="hidden space-y-3">
+                  <select id="portal-signup-verification" onchange="updateSignupVerificationMethod()" class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm">
+                    <option value="email">${currentLang === 'en' ? 'Verify by email' : 'އީމެއިލް އިން ވެރިފައިކުރޭ'}</option>
+                    <option value="sms">${currentLang === 'en' ? 'Verify by SMS (phone)' : 'SMS (ފޯން) އިން ވެރިފައިކުރޭ'}</option>
+                  </select>
+                  <p id="portal-sms-verification-note" class="hidden text-xs text-slate-500">${currentLang === 'en' ? 'SMS signup requires Phone signups enabled and an SMS provider configured in Supabase. Carrier charges may apply.' : 'SMS ސައިންއަޕަށް Supabase ގައި Phone signups ހުޅުވައި SMS ޕްރޮވައިޑަރެއް ސެޓްކުރަންވާނެ. SMS ގެ ޚަރަދު ހުރެދާނެ.'}</p>
+                  <div id="portal-signup-email-field">
+                    <input type="email" id="portal-signup-email" autocomplete="email"
+                      placeholder="${currentLang === 'en' ? 'Email address (for confirmation)' : 'އީމެއިލް (ކޮންފާމްކުރުމަށް)'}"
+                      class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                  </div>
+                  <input type="text" id="portal-signup-id" autocomplete="username" maxlength="32" autocapitalize="characters"
+                    placeholder="${currentLang === 'en' ? 'ID card number (starts with A)' : 'އައިޑީ ކާޑު ނަންބަރު (A އިން ފަށާ)'}"
+                    class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                  <input type="text" id="portal-signup-name" autocomplete="name" maxlength="100"
+                    placeholder="${currentLang === 'en' ? 'Full name' : 'ފުރިހަމަ ނަން'}"
+                    class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                  <input type="tel" id="portal-signup-phone" autocomplete="tel"
+                    placeholder="${currentLang === 'en' ? 'Contact number' : 'ގުޅޭނެ ނަންބަރު'}"
+                    class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                  <input type="text" id="portal-signup-island" autocomplete="address-level2"
+                    placeholder="${currentLang === 'en' ? 'Island' : 'ރަށް'}"
+                    class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                  <input type="text" id="portal-signup-address" autocomplete="street-address"
+                    placeholder="${currentLang === 'en' ? 'Permanent address' : 'ދާއިމީ އެޑްރެސް'}"
+                    class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                </div>
+                <input type="text" id="portal-auth-id" autocomplete="username" autocapitalize="characters" maxlength="32" required
+                  placeholder="${currentLang === 'en' ? 'ID card number (starts with A)' : 'އައިޑީ ކާޑު ނަންބަރު (A އިން ފަށާ)'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <input type="password" id="portal-auth-password" autocomplete="current-password" required minlength="8"
+                  placeholder="${currentLang === 'en' ? 'Password (at least 8 characters)' : 'ޕާސްވޯޑް (އަކުރު 8 އަށްވުރެ ގިނަ)'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <button type="submit" id="portal-auth-submit" class="w-full py-2.5 rounded-xl bg-lagoon-deep text-white hover:bg-lagoon-teal font-bold text-sm cursor-pointer"></button>
+              </form>
+              <button type="button" id="portal-auth-toggle" onclick="togglePortalAuthMode()" class="w-full text-sm font-bold text-lagoon-teal hover:underline cursor-pointer"></button>
+              <button type="button" id="portal-forgot-password" onclick="openPasswordResetRequest()" class="hidden w-full text-sm font-bold text-slate-500 hover:text-lagoon-teal hover:underline cursor-pointer">${currentLang === 'en' ? 'Forgot password?' : 'ޕާސްވޯޑް ހަނދާން ނެތް؟'}</button>
+              <div id="portal-password-reset-request" class="hidden border-t border-sand-gold pt-4 space-y-2">
+                <p class="text-sm text-slate-600">${currentLang === 'en' ? 'Enter the email address used for your account. We will send a password reset link if an account matches.' : 'އެކައުންޓަށް ބޭނުންކުރި އީމެއިލް ލިޔާ. އެއްގޮތް އެކައުންޓެއް އޮތްނަމަ ރިސެޓް ލިންކެއް ފޮނުވޭނެ.'}</p>
+                <input type="email" id="portal-reset-email" autocomplete="email"
+                  placeholder="${currentLang === 'en' ? 'Account email address' : 'އެކައުންޓް އީމެއިލް'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <button type="button" onclick="sendPasswordResetEmail()" class="w-full py-2.5 rounded-xl bg-lagoon-deep text-white hover:bg-lagoon-teal font-bold text-sm cursor-pointer">${currentLang === 'en' ? 'Send reset link' : 'ރިސެޓް ލިންކް ފޮނުވާ'}</button>
+                <button type="button" onclick="cancelPasswordResetRequest()" class="w-full text-xs font-bold text-slate-500 hover:text-lagoon-teal hover:underline cursor-pointer">${currentLang === 'en' ? 'Back to sign in' : 'ލޮގިންއަށް ދިއުން'}</button>
+              </div>
+              <div id="portal-password-reset-form" class="hidden border-t border-sand-gold pt-4 space-y-2">
+                <p class="text-sm text-slate-600">${currentLang === 'en' ? 'Choose a new password for your account.' : 'ތިޔަގެ އެކައުންޓަށް އާ ޕާސްވޯޑެއް ނިންމާ.'}</p>
+                <input type="password" id="portal-new-password" autocomplete="new-password" minlength="8"
+                  placeholder="${currentLang === 'en' ? 'New password (at least 8 characters)' : 'އާ ޕާސްވޯޑް (އަކުރު 8 ނުވަތަ އެއަށްވުރެ ގިނަ)'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <input type="password" id="portal-confirm-password" autocomplete="new-password" minlength="8"
+                  placeholder="${currentLang === 'en' ? 'Confirm new password' : 'އާ ޕާސްވޯޑް ޔަޤީންކުރޭ'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <button type="button" onclick="submitPortalPasswordReset()" class="w-full py-2.5 rounded-xl bg-lagoon-deep text-white hover:bg-lagoon-teal font-bold text-sm cursor-pointer">${currentLang === 'en' ? 'Update password' : 'ޕާސްވޯޑް އަޕްޑޭޓްކުރޭ'}</button>
+                <button type="button" onclick="cancelPasswordRecovery()" class="w-full text-xs font-bold text-slate-500 hover:text-lagoon-teal hover:underline cursor-pointer">${currentLang === 'en' ? 'Cancel and return to sign in' : 'ކެންސަލްކޮށް ލޮގިންއަށް ދިއުން'}</button>
+              </div>
+              <div id="portal-phone-verification" class="hidden border-t border-sand-gold pt-4 space-y-2">
+                <p class="text-sm text-slate-600">${currentLang === 'en' ? 'Enter the verification code sent to your phone.' : 'ތިޔަ ފޯނަށް ފޮނުވި ވެރިފައިކުރުމުގެ ކޯޑު ލިޔާ.'}</p>
+                <input type="text" id="portal-phone-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="10"
+                  placeholder="${currentLang === 'en' ? 'SMS verification code' : 'SMS ވެރިފައިކުރުމުގެ ކޯޑު'}"
+                  class="w-full rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+                <button type="button" onclick="verifyPortalPhoneOtp()" class="w-full py-2.5 rounded-xl bg-lagoon-deep text-white hover:bg-lagoon-teal font-bold text-sm cursor-pointer">${currentLang === 'en' ? 'Verify Phone' : 'ފޯން ވެރިފައިކުރޭ'}</button>
+                <button type="button" onclick="resendSmsConfirmation()" class="w-full text-xs font-bold text-slate-500 hover:text-lagoon-teal hover:underline cursor-pointer">${currentLang === 'en' ? 'Resend SMS code' : 'SMS ކޯޑު އަލުން ފޮނުވާ'}</button>
+                <button type="button" onclick="cancelPhoneVerification()" class="w-full text-xs font-bold text-slate-500 hover:text-lagoon-teal hover:underline cursor-pointer">${currentLang === 'en' ? 'Back to sign in' : 'ލޮގިންއަށް ދިއުން'}</button>
+              </div>
+            </section>
+          </div>
+        `;
+        setPortalAuthMode(portalAuthMode);
+        return;
+      }
+
+      const pendingMembers = familyMembers.filter(m => m.status === 'pending');
+      if (!canManageFamily && !canPublishNews) {
+        body.innerHTML = `
+          <div class="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-8 border border-sand-gold shadow-sm space-y-5">
+            <h3 class="text-xl font-bold text-lagoon-deep">${currentLang === 'en' ? 'Register a Family Member' : 'އާއިލީ މެންބަރަކު ރަޖިސްޓަރީކުރޭ'}</h3>
+            <p class="text-sm text-slate-600">${currentLang === 'en' ? 'New registrations stay hidden from the public family tree until an admin verifies them.' : 'އާ ރަޖިސްޓްރީތައް އެޑްމިން ވެރިފައިކުރާންދެން އާންމު އާއިލީ ގަހުން ފޮރުވިފައި ބެހެއްޓޭނެ.'}</p>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" onclick="openAddMemberModal('', '')" class="px-5 py-3 rounded-2xl bg-coral-accent text-white font-bold text-sm cursor-pointer">${t('addMemberBtn')}</button>
+              <button type="button" onclick="switchPage('family')" class="px-5 py-3 rounded-2xl bg-lagoon-mist text-lagoon-deep font-bold text-sm cursor-pointer">${t('heroFamilyBtn')}</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      body.innerHTML = `
+        <div class="space-y-6">
+          ${isAdmin ? `<section class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-gold shadow-sm space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="text-xl font-bold text-lagoon-deep">${currentLang === 'en' ? 'Manage User Access' : 'ޔޫޒަރުންގެ ހުއްދަ ބެލުން'}</h3>
+                <p class="text-xs text-slate-500 mt-1">${currentLang === 'en' ? 'Invite people and assign the access they need.' : 'ބޭފުޅުން އިންވައިޓްކޮށް ބޭނުންވާ ހުއްދަ ދޭ.'}</p>
+              </div>
+            </div>
+            <form onsubmit="createPortalUser(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-sand-warm border border-sand-gold">
+              <input id="admin-new-user-name" type="text" maxlength="100" required
+                placeholder="${currentLang === 'en' ? 'Full name' : 'ފުރިހަމަ ނަން'}"
+                class="rounded-xl border border-sand-gold bg-white px-3.5 py-2 text-sm" />
+              <input id="admin-new-user-email" type="email" maxlength="254" required
+                placeholder="${currentLang === 'en' ? 'Email address' : 'އީމެއިލް'}"
+                class="rounded-xl border border-sand-gold bg-white px-3.5 py-2 text-sm" />
+              <input id="admin-new-user-id" type="text" maxlength="32" required autocapitalize="characters"
+                placeholder="${currentLang === 'en' ? 'ID card number (starts with A)' : 'އައިޑީ ކާޑު ނަންބަރު (A އިން ފަށާ)'}"
+                class="rounded-xl border border-sand-gold bg-white px-3.5 py-2 text-sm" />
+              <select id="admin-new-user-role" class="rounded-xl border border-sand-gold bg-white px-3.5 py-2 text-sm">
+                <option value="user">${getPortalRoleLabel('user')}</option>
+                <option value="editor">${getPortalRoleLabel('editor')}</option>
+                <option value="content_writer">${getPortalRoleLabel('content_writer')}</option>
+                <option value="admin">${getPortalRoleLabel('admin')}</option>
+              </select>
+              <button type="submit" class="rounded-xl bg-lagoon-deep px-4 py-2 text-sm font-bold text-white hover:bg-lagoon-teal cursor-pointer">${currentLang === 'en' ? 'Invite user' : 'ޔޫޒަރަށް އިންވައިޓްކުރޭ'}</button>
+              <p class="sm:col-span-2 text-xs text-slate-500">${currentLang === 'en' ? 'The invited person sets their password from the email link.' : 'އިންވައިޓް ކުރެވުނު ބޭފުޅާ އީމެއިލް ލިންކުން ޕާސްވޯޑް ސެޓްކުރާނެ.'}</p>
+            </form>
+            <p class="text-xs leading-relaxed text-slate-600">${currentLang === 'en'
+              ? 'Administrator: users and all settings. Editor: Family Tree review and editing. Content writer: publish news. User: submit family records for review.'
+              : 'އެޑްމިން: ޔޫޒަރުން އަދި ހުރިހާ ސެޓިންގ. އެޑިޓަރ: އާއިލީ ގަހު ބަލާލުން. ކޮންޓެންޓް ރައިޓަރ: ޚަބަރު ޝާއިޢުކުރުން. ޔޫޒަރ: އާއިލީ ރެކޯޑުތައް ބަލާލުމަށް ފޮނުވުން.'}</p>
+            <div id="admin-user-roles" class="space-y-3">
+              <p class="text-sm text-slate-500">${currentLang === 'en' ? 'Loading users…' : 'ޔޫޒަރުން ލޯޑްވަނީ…'}</p>
+            </div>
+          </section>` : ''}
+          ${canManageFamily ? `<section class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-gold shadow-sm space-y-4">
+            <div>
+              <h3 class="text-xl font-bold text-lagoon-deep">${currentLang === 'en' ? 'Family Tree Verification' : 'އާއިލީ ގަހުގެ ވެރިފައި'}</h3>
+              <p class="text-xs text-slate-500 mt-1">${currentLang === 'en' ? `${pendingMembers.length} family member submission${pendingMembers.length === 1 ? '' : 's'} awaiting review` : `${pendingMembers.length} އާއިލީ ހުށަހެޅުން ބަލަން ބާކީ`}</p>
+            </div>
+            <div class="space-y-3">
+              ${pendingMembers.length ? pendingMembers.map(member => `
+                <div class="p-4 rounded-2xl bg-sand-warm border border-sand-gold flex flex-wrap items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="font-bold text-lagoon-deep">${escapeHTML(getLocalizedMemberName(member))}</p>
+                    <p class="text-xs text-slate-600">${escapeHTML(getLocalizedMemberHouse(member))} • ID: ${escapeHTML(member.nationalId || 'N/A')}</p>
+                    <p class="text-xs text-slate-500 mt-1">${escapeHTML(member.fatherName || '')}${member.motherName ? ` • ${escapeHTML(member.motherName)}` : ''}</p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="approveFamilyMember('${escapeHTML(member.id)}')" class="px-3 py-2 rounded-xl bg-lagoon-teal text-white text-xs font-bold cursor-pointer">${currentLang === 'en' ? 'Verify' : 'ވެރިފައިކުރޭ'}</button>
+                    <button type="button" onclick="rejectFamilyMember('${escapeHTML(member.id)}')" class="px-3 py-2 rounded-xl bg-red-100 text-red-700 text-xs font-bold cursor-pointer">${currentLang === 'en' ? 'Reject' : 'ބާތިލްކުރޭ'}</button>
+                  </div>
+                </div>
+              `).join('') : `
+                <p class="rounded-2xl bg-lagoon-mist/60 p-5 text-sm text-slate-600">${currentLang === 'en' ? 'There are no family member submissions awaiting verification.' : 'ވެރިފައިކުރަން ބާކީވާ އާއިލީ މެންބަރެއް ނެތް.'}</p>
+              `}
+            </div>
+          </section>` : ''}
+          ${canPublishNews ? `<section class="bg-white rounded-3xl p-6 sm:p-8 border border-sand-gold shadow-sm space-y-5">
+            <div>
+              <h3 class="text-xl font-bold text-lagoon-deep">${currentLang === 'en' ? 'Write an Island Update' : 'ރަށުގެ އަޕްޑޭޓެއް ލިޔޭ'}</h3>
+              <p class="text-xs text-slate-500 mt-1">${currentLang === 'en' ? 'Published news is shared on the public homepage.' : 'ޝާއިޢުކުރި ޚަބަރު އާންމު މައި ސަފްޙާގައި ދައްކާނެ.'}</p>
+            </div>
+            <form onsubmit="handleAdminPublishNews(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="adm-news-title-dv" type="text" maxlength="160" required
+                placeholder="${currentLang === 'en' ? 'Dhivehi title' : 'ދިވެހި ސުރުޚީ'}"
+                class="rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+              <input id="adm-news-title-en" type="text" maxlength="160" required
+                placeholder="${currentLang === 'en' ? 'English title' : 'އިނގިރޭސި ސުރުޚީ'}"
+                class="rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+              <select id="adm-news-cat" class="rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm">
+                <option value="community">${currentLang === 'en' ? 'Community' : 'އިޖުތިމާޢީ'}</option>
+                <option value="council">${currentLang === 'en' ? 'Council notice' : 'ކައުންސިލް އިޢުލާން'}</option>
+                <option value="development">${currentLang === 'en' ? 'Development' : 'ތަރައްޤީ'}</option>
+              </select>
+              <input id="adm-news-img" type="url" maxlength="2048"
+                placeholder="${currentLang === 'en' ? 'Image URL (optional)' : 'ފޮޓޯ ލިންކް (އޮޕްޝަނަލް)'}"
+                class="rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm" />
+              <textarea id="adm-news-body-dv" maxlength="5000" required rows="4"
+                placeholder="${currentLang === 'en' ? 'Dhivehi summary' : 'ދިވެހި ތަފްޞީލް'}"
+                class="sm:col-span-2 rounded-xl border border-sand-gold bg-sand-warm px-3.5 py-2 text-sm"></textarea>
+              <button type="submit" class="sm:col-span-2 justify-self-start rounded-xl bg-lagoon-deep px-5 py-2.5 text-sm font-bold text-white hover:bg-lagoon-teal cursor-pointer">${currentLang === 'en' ? 'Publish update' : 'އަޕްޑޭޓް ޝާއިޢުކުރޭ'}</button>
+            </form>
+          </section>` : ''}
+        </div>
+      `;
+      if (isAdmin) loadAdminUserRoles();
+    }
+
+    async function createPortalUser(event) {
+      event.preventDefault();
+      if (!await requirePortalAccess('admin') || !supabaseClient) return;
+      const fullName = document.getElementById('admin-new-user-name').value.trim();
+      const email = document.getElementById('admin-new-user-email').value.trim().toLowerCase();
+      const idCardNumber = document.getElementById('admin-new-user-id').value.trim().toUpperCase().replace(/^A-/, 'A');
+      const role = document.getElementById('admin-new-user-role').value;
+      if (!fullName || !email || !/^A[A-Z0-9][A-Z0-9-]{0,30}$/.test(idCardNumber) || !['user', 'admin', 'editor', 'content_writer'].includes(role)) {
+        showToast(currentLang === 'en'
+          ? 'Enter a name, valid email, ID card number beginning with A, and access level.'
+          : 'ނަން، ރަނގަޅު އީމެއިލް، A އިން ފެށޭ އައިޑީ ކާޑު ނަންބަރު، އަދި ހުއްދަ ހޮވާ.');
+        return;
+      }
+
+      const { data, error } = await supabaseClient.functions.invoke('manage-users', {
+        body: { fullName, email, idCardNumber, role }
+      });
+      if (error) {
+        let message = error.message;
+        if (error.context instanceof Response) {
+          const response = await error.context.json();
+          if (typeof response.error === 'string') message = response.error;
+        }
+        showToast(currentLang === 'en' ? `Could not invite user: ${message}` : `ޔޫޒަރަށް އިންވައިޓްނުވޭ: ${message}`);
+        return;
+      }
+      if (!data || data.invited !== true) {
+        showToast(currentLang === 'en' ? 'The invitation was not completed.' : 'އިންވައިޓްކުރުން ނިމިފައި ނުވޭ.');
+        return;
+      }
+      event.target.reset();
+      showToast(currentLang === 'en'
+        ? `Invitation sent to ${email} as ${getPortalRoleLabel(role)}.`
+        : `${email} އަށް ${getPortalRoleLabel(role)} ގެ ހުއްދައާއެކު އިންވައިޓް ފޮނުވިއްޖެ.`);
+      await loadAdminUserRoles();
+    }
+
+    async function loadAdminUserRoles() {
+      if (currentPortalRole !== 'admin' || !supabaseClient) return;
+      const container = document.getElementById('admin-user-roles');
+      if (!container) return;
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, auth_phone, contact_number, role')
+        .order('full_name', { ascending: true });
+      if (error) {
+        const missingProfilesTable = error.code === 'PGRST205'
+          || /could not find the table|relation .*profiles.* does not exist/i.test(error.message);
+        container.textContent = missingProfilesTable
+          ? (currentLang === 'en'
+            ? `Supabase cannot find public.profiles (${error.code || 'no error code'}): ${error.message}. Check project kxaqurntpjvpecodgoxf.`
+            : `Supabase އަށް public.profiles ނުފެނޭ (${error.code || 'no error code'}): ${error.message}`)
+          : (currentLang === 'en'
+            ? `Could not load users: ${error.message}`
+            : `ޔޫޒަރުން ނުލޯޑްވޭ: ${error.message}`);
+        return;
+      }
+      if (!data.length) {
+        container.textContent = currentLang === 'en' ? 'No user accounts found.' : 'ޔޫޒަރުގެ އެކައުންޓެއް ނުފެނުނު.';
+        return;
+      }
+      container.innerHTML = data.map(user => `
+        <div class="p-4 rounded-2xl bg-sand-warm border border-sand-gold flex flex-wrap items-center justify-between gap-3">
+          <div class="min-w-0 space-y-1">
+            <p class="font-bold text-lagoon-deep">${escapeHTML(user.full_name || '')}${user.id === currentPortalProfile.id ? ` <span class="text-xs font-normal text-slate-500">(${currentLang === 'en' ? 'You' : 'ތިބާ'})</span>` : ''}</p>
+            <p class="text-xs text-slate-600">${escapeHTML(user.email || user.auth_phone || user.contact_number || '')}</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="admin-role-${escapeHTML(user.id)}" ${user.id === currentPortalProfile.id ? 'disabled' : ''} class="rounded-xl border border-sand-gold bg-white px-3 py-2 text-xs">
+              <option value="user" ${user.role === 'user' ? 'selected' : ''}>${getPortalRoleLabel('user')}</option>
+              <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>${getPortalRoleLabel('editor')}</option>
+              <option value="content_writer" ${user.role === 'content_writer' ? 'selected' : ''}>${getPortalRoleLabel('content_writer')}</option>
+              <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>${getPortalRoleLabel('admin')}</option>
+            </select>
+            ${user.id === currentPortalProfile.id
+              ? `<span class="text-xs text-slate-500">${currentLang === 'en' ? 'Your role cannot be changed here.' : 'މިތަނުން ތިބާގެ ހުއްދަ ބަދަލު ނުކުރެވޭ.'}</span>`
+              : `<button type="button" onclick="updatePortalUserRole('${escapeHTML(user.id)}')" class="px-3 py-2 rounded-xl bg-lagoon-teal text-white text-xs font-bold cursor-pointer">${currentLang === 'en' ? 'Save role' : 'ހުއްދަ ސޭވްކުރޭ'}</button>`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function updatePortalUserRole(userId) {
+      if (currentPortalRole !== 'admin' || !supabaseClient) return;
+      if (!userId || userId === currentPortalProfile.id) return;
+      const roleControl = document.getElementById(`admin-role-${userId}`);
+      const role = roleControl ? roleControl.value : '';
+      if (!['user', 'admin', 'editor', 'content_writer'].includes(role)) return;
+      const { error } = await supabaseClient.rpc('set_user_role', {
+        target_user_id: userId,
+        new_role: role
+      });
+      if (error) {
+        showToast(error.message);
+        return;
+      }
+      showToast(currentLang === 'en'
+        ? `User role updated to ${getPortalRoleLabel(role)}.`
+        : `ޔޫޒަރުގެ ހުއްދަ ${getPortalRoleLabel(role)} އަށް ބަދަލުކުރެވިއްޖެ.`);
+      await loadAdminUserRoles();
+    }
+
+    async function deleteFamilyMemberByAdmin(memberId) {
+      if (!await requirePortalAccess('admin')) return;
+      const idx = familyMembers.findIndex(x => x.id === memberId);
+      if (idx === -1) return;
+      const removed = familyMembers[idx];
+      const originalFamilyMembers = new Map(familyMembers.map(member => [member.id, JSON.stringify(member)]));
+      familyMembers.splice(idx, 1);
+
+      familyMembers.forEach(m => {
+        if (m.spouseId === memberId) { m.spouseId = ''; m.spouseName = ''; }
+        if (m.fatherId === memberId) { m.fatherId = ''; }
+        if (m.motherId === memberId) { m.motherId = ''; }
+        if (m.parentId === memberId) { m.parentId = m.fatherId || m.motherId || ''; }
+      });
+
+      recalculateAutoGenerations();
+      const changedRecords = familyMembers.filter(member =>
+        originalFamilyMembers.get(member.id) !== JSON.stringify(member)
+      );
+      if (!await persistFamilyMemberRecords(changedRecords, true, currentPortalProfile.id)) {
+        await loadFamilyData();
+        return;
+      }
+      const { error } = await supabaseClient.from('family_members').delete().eq('id', memberId);
+      if (error) {
+        showToast(currentLang === 'en'
+          ? `Could not remove ${removed.name}: ${error.message}`
+          : `${removed.name} އުނިކުރެވޭނު: ${error.message}`);
+        await loadFamilyData();
+        return;
+      }
+      familyMemberOwners.delete(memberId);
+      renderFamilyTree();
+      renderPortalDashboard();
+      showToast(currentLang === 'en' ? `Removed ${removed.name}` : `${removed.name} އާއިލީ ގަހުން އުނިކުރެވިއްޖެ`);
+    }
+
+    async function handleAdminPublishNews(event) {
+      event.preventDefault();
+      if (!await requirePortalAccess('publish_news')) return;
+      const titleDv = document.getElementById('adm-news-title-dv').value.trim();
+      const titleEn = document.getElementById('adm-news-title-en').value.trim() || titleDv;
+      const category = document.getElementById('adm-news-cat').value;
+      const image = document.getElementById('adm-news-img').value.trim() || 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=80';
+      const summaryDv = document.getElementById('adm-news-body-dv').value.trim();
+      const article = {
+        id: `news-${crypto.randomUUID()}`,
+        category,
+        titleDv,
+        titleEn,
+        date: new Date().toISOString().slice(0, 10),
+        summaryDv,
+        summaryEn: summaryDv,
+        image
+      };
+      const { error } = await supabaseClient.from('news_articles').insert({
+        id: article.id,
+        category: article.category,
+        title_dv: article.titleDv,
+        title_en: article.titleEn,
+        summary_dv: article.summaryDv,
+        summary_en: article.summaryEn,
+        image: article.image,
+        created_by: currentPortalProfile.id
+      });
+      if (error) {
+        showToast(currentLang === 'en'
+          ? `Could not publish news: ${error.message}`
+          : `ޚަބަރު ޝާއިޢުނުވޭ: ${error.message}`);
+        return;
+      }
+      newsItems.unshift(article);
+      renderLatestNews();
+      event.target.reset();
+      showToast(currentLang === 'en' ? 'News published to homepage!' : 'އާ ޚަބަރު މައި ސަފްޙާގައި ޝާއިޢުކުރެވިއްޖެ!');
+    }
+
+    async function approveFamilyMember(memberId) {
+      if (!await requirePortalAccess('family')) return;
+      const m = familyMembers.find(x => x.id === memberId);
+      if (m && m.status === 'pending') {
+        m.status = 'verified';
+        if (!await persistFamilyMemberRecords([m], true, currentPortalProfile.id)) {
+          await loadFamilyData();
+          return;
+        }
+        renderFamilyTree();
+        renderPortalDashboard();
+        showToast(currentLang === 'en' ? `${m.name} verified!` : `${m.name} ވެރިފައިކުރެވިއްޖެ!`);
+      }
+    }
+
+    async function rejectFamilyMember(memberId) {
+      if (!await requirePortalAccess('family')) return;
+      const idx = familyMembers.findIndex(member => member.id === memberId && member.status === 'pending');
+      if (idx === -1) return;
+      const rejected = familyMembers[idx];
+      const { error } = await supabaseClient.from('family_members').delete().eq('id', memberId);
+      if (error) {
+        showToast(currentLang === 'en'
+          ? `Could not reject ${rejected.name}'s submission: ${error.message}`
+          : `${rejected.name} ގެ ހުށަހެޅުން ބާތިލްނުވޭ: ${error.message}`);
+        return;
+      }
+      familyMembers.splice(idx, 1);
+      familyMemberOwners.delete(memberId);
+      renderFamilyTree();
+      renderPortalDashboard();
+      showToast(currentLang === 'en' ? `${rejected.name}'s submission was rejected.` : `${rejected.name} ގެ ހުށަހެޅުން ބާތިލްކުރެވިއްޖެ.`);
+    }
+
+    if (supabaseClient) {
+      supabaseClient.auth.onAuthStateChange(event => {
+        if (event !== 'PASSWORD_RECOVERY') return;
+        pendingPasswordRecovery = true;
+        window.setTimeout(() => {
+          setCurrentPortalProfile(null);
+          switchPage('portal');
+          setPortalAuthMode('reset-password');
+        }, 0);
+      });
+    }
+
+    // Expose global handlers
+    window.switchPage = switchPage;
+    window.navigateToSection = navigateToSection;
+    window.toggleMobileMenu = toggleMobileMenu;
+    window.toggleSiteLanguage = toggleSiteLanguage;
+    window.toggleAddressRequirementFor1984 = toggleAddressRequirementFor1984;
+    window.openPhrasebookModal = openPhrasebookModal;
+    window.closePhrasebookModal = closePhrasebookModal;
+    window.copyPhraseText = copyPhraseText;
+    window.filterNewsCategory = filterNewsCategory;
+    window.openNewsReader = openNewsReader;
+    window.closeNewsReaderModal = closeNewsReaderModal;
+    window.selectOverviewTab = selectOverviewTab;
+    window.filterExperiences = filterExperiences;
+    window.updateTransferEstimate = updateTransferEstimate;
+    window.togglePackItem = togglePackItem;
+    window.openAddMemberModal = openAddMemberModal;
+    window.openEditMemberModal = openEditMemberModal;
+    window.closeAddMemberModal = closeAddMemberModal;
+    window.handleAddFamilyMember = handleAddFamilyMember;
+    window.handleNationalIdAutoLookup = handleNationalIdAutoLookup;
+    window.handleMemberPhotoFile = handleMemberPhotoFile;
+    window.toggleMemberPhotoMenu = toggleMemberPhotoMenu;
+    window.chooseMemberPhotoSource = chooseMemberPhotoSource;
+    window.handleMemberPhotoDragOver = handleMemberPhotoDragOver;
+    window.handleMemberPhotoDragLeave = handleMemberPhotoDragLeave;
+    window.handleMemberPhotoDrop = handleMemberPhotoDrop;
+    window.clearMemberPhoto = clearMemberPhoto;
+    window.openPersonDetailModal = openPersonDetailModal;
+    window.closePersonDetailModal = closePersonDetailModal;
+    window.clearLineageSelection = clearLineageSelection;
+    window.clearFamilyFilters = clearFamilyFilters;
+    window.renderFamilyTree = renderFamilyTree;
+    window.scheduleFamilyTreeRender = scheduleFamilyTreeRender;
+    window.exportFamilyJSON = exportFamilyJSON;
+    window.importAndMergeFamilyJSON = importAndMergeFamilyJSON;
+    window.importLegacyFamilyTree = importLegacyFamilyTree;
+    window.handlePortalNavClick = handlePortalNavClick;
+    window.togglePortalAuthMode = togglePortalAuthMode;
+    window.resendConfirmationEmail = resendConfirmationEmail;
+    window.handlePortalAuthSubmit = handlePortalAuthSubmit;
+    window.logoutPortal = logoutPortal;
+    window.createPortalUser = createPortalUser;
+    window.openPasswordResetRequest = openPasswordResetRequest;
+    window.cancelPasswordResetRequest = cancelPasswordResetRequest;
+    window.sendPasswordResetEmail = sendPasswordResetEmail;
+    window.submitPortalPasswordReset = submitPortalPasswordReset;
+    window.cancelPasswordRecovery = cancelPasswordRecovery;
+    window.updateSignupVerificationMethod = updateSignupVerificationMethod;
+    window.verifyPortalPhoneOtp = verifyPortalPhoneOtp;
+    window.resendSmsConfirmation = resendSmsConfirmation;
+    window.cancelPhoneVerification = cancelPhoneVerification;
+    window.handleAdminPublishNews = handleAdminPublishNews;
+    window.approveFamilyMember = approveFamilyMember;
+    window.rejectFamilyMember = rejectFamilyMember;
+    window.updatePortalUserRole = updatePortalUserRole;
+    window.deleteFamilyMemberByAdmin = deleteFamilyMemberByAdmin;
+
+    window.addEventListener('resize', () => {
+      if (currentPage === 'family') scheduleFamilyTreeConnectors();
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      const photoMenu = document.getElementById('fm-photo-source-menu');
+      if (photoMenu) photoMenu.classList.add('hidden');
+      const photoMenuButton = document.querySelector('.family-photo-camera-badge');
+      if (photoMenuButton) photoMenuButton.setAttribute('aria-expanded', 'false');
+      ['phrasebook-modal', 'news-reader-modal', 'add-member-modal', 'person-detail-modal', 'family-photo-lightbox'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal && !modal.classList.contains('hidden')) {
+          if (id === 'family-photo-lightbox') closeFamilyPhotoLightbox();
+          else { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+      });
+      document.getElementById('mobile-menu')?.classList.add('hidden');
+    });
+
+    document.addEventListener('click', event => {
+      const target = event.target instanceof Element ? event.target.closest('img[data-family-photo]') : null;
+      if (!target) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openFamilyPhotoLightbox(target.currentSrc || target.src, target.alt);
+    }, true);
+
+    document.addEventListener('click', event => {
+      const menu = document.getElementById('fm-photo-source-menu');
+      const button = document.querySelector('.family-photo-camera-badge');
+      if (!menu || menu.classList.contains('hidden') || !(event.target instanceof Element)) return;
+      if (menu.contains(event.target) || (button && button.contains(event.target))) return;
+      menu.classList.add('hidden');
+      if (button) button.setAttribute('aria-expanded', 'false');
+    });
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      loadSavedLanguage();
+      loadNewsData();
+      loadPublishedNews();
+      loadExperiencesData();
+      applyLanguageUI();
+      await loadPortalSession();
+      await loadFamilyData();
+      if (window.ResizeObserver) {
+        familyTreeResizeObserver = new ResizeObserver(() => {
+          if (currentPage === 'family') scheduleFamilyTreeConnectors();
+        });
+        const familyTreeContent = document.getElementById('family-generations-container');
+        if (familyTreeContent) familyTreeResizeObserver.observe(familyTreeContent);
+      }
+    });
+  </script>
+</body>
+</html>
