@@ -1,165 +1,686 @@
-"""
-update_rathafandhoo_portal.py
+<!DOCTYPE html>
+<html lang="dv" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>މައި ރަތަފަންދޫ — My Rathafandhoo | GDh. Rathafandhoo</title>
 
-Safely updates `index.html` in the current working directory from a source HTML file
-(or stamps a build/version marker into an existing `index.html`), optionally creates a
-timestamped backup, and can build `my-rathafandhoo-portal.zip`.
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
 
-Usage:
-    python update_rathafandhoo_portal.py
-    python update_rathafandhoo_portal.py --source code.html --zip
-"""
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-from __future__ import annotations
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-import argparse
-from datetime import datetime, timezone
-import re
-import shutil
-import sys
-import zipfile
-from pathlib import Path
+  <script>
+    // Configure custom island palette and typography tokens
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lagoon: {
+              50: '#F0F9FA',
+              100: '#D9F0F3',
+              200: '#B5E1E8',
+              300: '#82CBD7',
+              400: '#48ACBE',
+              500: '#0E7490',
+              600: '#0B5E75',
+              700: '#094B5E',
+              800: '#073B4B',
+              900: '#052A36'
+            },
+            coral: {
+              400: '#F26B5B',
+              500: '#E05A47',
+              600: '#C44533'
+            },
+            sand: {
+              50: '#FAF8F5',
+              100: '#F3EFE8',
+              200: '#E6DFD3',
+              300: '#D4C8B4'
+            },
+            reef: {
+              900: '#0F172A',
+              800: '#1E293B',
+              600: '#334155'
+            }
+          },
+          fontFamily: {
+            sans: ['"Inter"', '"Plus Jakarta Sans"', '"Faruma"', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Inter"', '"Faruma"', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
 
+  <style>
+    @font-face {
+      font-family: 'Faruma';
+      src: local('Faruma'),
+           local('Faruma Regular'),
+           url('https://cdn.jsdelivr.net/gh/jawish/thaana-fonts@master/fonts/Faruma.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/gh/jawish/thaana-fonts@master/fonts/Faruma.woff') format('woff');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
 
-DEFAULT_README = """# My Rathafandhoo (މައި ރަތަފަންދޫ) — Portal Package
+    body {
+      background-color: #FAF8F5;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
 
-A bilingual (Dhivehi RTL in Faruma font & English LTR in Inter/Plus Jakarta Sans)
-community portal for **GDh. Rathafandhoo**, Huvadhu Atoll, Maldives.
-"""
+    html[dir="rtl"] body,
+    html[dir="rtl"] h1,
+    html[dir="rtl"] h2,
+    html[dir="rtl"] h3,
+    html[dir="rtl"] button,
+    html[dir="rtl"] input,
+    html[dir="rtl"] select,
+    html[dir="rtl"] textarea {
+      font-family: 'Faruma', 'MV Boli', 'Inter', sans-serif;
+      letter-spacing: 0;
+    }
 
+    .tree-canvas {
+      background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Update index.html for the Rathafandhoo portal cleanly."
-    )
-    parser.add_argument(
-        "--source",
-        type=Path,
-        default=None,
-        help="Path to a DIFFERENT HTML file to copy into index.html (e.g., code.html).",
-    )
-    parser.add_argument(
-        "--target",
-        type=Path,
-        default=Path("index.html"),
-        help="Target HTML file path (default: index.html).",
-    )
-    parser.add_argument(
-        "--force-stamp",
-        action="store_true",
-        help="Explicitly stamp a new build timestamp into the existing target file without a --source file.",
-    )
-    parser.add_argument(
-        "--no-backup",
-        action="store_true",
-        help="Skip creating a backup copy before modifying index.html.",
-    )
-    parser.add_argument(
-        "--zip",
-        action="store_true",
-        help="Also generate my-rathafandhoo-portal.zip after updating index.html.",
-    )
-    return parser.parse_args()
+    .fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
 
-def create_backup(target_path: Path) -> Path | None:
-    """Create a timestamped backup of an existing target file."""
-    if not target_path.exists() or not target_path.is_file():
-        return None
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    backup_path = target_path.with_name(f"{target_path.stem}.backup-{stamp}{target_path.suffix}")
-    shutil.copy2(target_path, backup_path)
-    return backup_path
+  <!-- Toast Banner Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 left-5 sm:left-auto sm:w-96 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-sand-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <button type="button" onclick="switchView('overview')" class="flex items-center gap-2.5 text-start cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-lagoon-500 to-lagoon-700 text-white flex items-center justify-center shadow-sm">
+          <i data-lucide="waves" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="font-extrabold text-sm sm:text-base text-reef-900" data-i18n="brandTitle">މައި ރަތަފަންދޫ</div>
+          <div class="text-[11px] text-lagoon-600 hidden sm:block" data-i18n="brandSub">ގދ. ރަތަފަންދޫ • ހުވަދުއަތޮޅު ދެކުނުބުރި</div>
+        </div>
+      </button>
 
-def inject_build_stamp(html_content: str, build_label: str) -> str:
-    """Insert or update a visible build stamp comment and footer badge in HTML."""
-    comment_line = f"<!-- Portal Build: {build_label} -->"
-    if re.search(r"<!--\s*Portal Build:.*?-->", html_content):
-        html_content = re.sub(
-            r"<!--\s*Portal Build:.*?-->",
-            comment_line,
-            html_content,
-            count=1,
-        )
-    else:
-        html_content = f"{comment_line}\n{html_content}"
+      <nav class="hidden md:flex items-center gap-1 bg-sand-100 p-1 rounded-2xl border border-sand-200">
+        <button type="button" onclick="switchView('overview')" data-nav="overview" class="nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-lagoon-700 cursor-pointer" data-i18n="navOverview">ރަށުގެ މަޢުލޫމާތު</button>
+        <button type="button" onclick="switchView('news')" data-nav="news" class="nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-reef-700 hover:text-lagoon-600 cursor-pointer" data-i18n="navNews">ޚަބަރު</button>
+        <button type="button" onclick="switchView('polls')" data-nav="polls" class="nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-reef-700 hover:text-lagoon-600 cursor-pointer" data-i18n="navPolls">ޕޯލް</button>
+        <button type="button" onclick="switchView('family')" data-nav="family" class="nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-reef-700 hover:text-lagoon-600 cursor-pointer" data-i18n="navFamily">އާއިލީ ގަސް</button>
+      </nav>
 
-    badge_pattern = r'<span id="portal-build-stamp"[^>]*>.*?</span>'
-    badge_html = (
-        f'<span id="portal-build-stamp" class="text-[11px] text-sand-300">'
-        f'Build: {build_label}</span>'
-    )
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="toggleLanguage()" class="px-3 py-1.5 rounded-xl border border-sand-200 bg-white hover:border-lagoon-500 text-xs font-bold text-reef-900 flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-lagoon-600"></i>
+          <span id="lang-label">English</span>
+        </button>
+        <button type="button" onclick="toggleMobileNav()" aria-label="Toggle navigation" class="md:hidden p-2 rounded-xl bg-sand-100 border border-sand-200 text-reef-900 cursor-pointer">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
 
-    if re.search(badge_pattern, html_content, flags=re.DOTALL):
-        return re.sub(badge_pattern, badge_html, html_content, count=1, flags=re.DOTALL)
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav" class="hidden md:hidden border-t border-sand-200 bg-white px-4 py-3 space-y-1.5">
+      <button type="button" onclick="switchView('overview'); toggleMobileNav()" class="block w-full text-start px-3 py-2 rounded-xl text-sm font-bold hover:bg-sand-50" data-i18n="navOverview">ރަށުގެ މަޢުލޫމާތު</button>
+      <button type="button" onclick="switchView('news'); toggleMobileNav()" class="block w-full text-start px-3 py-2 rounded-xl text-sm font-semibold hover:bg-sand-50" data-i18n="navNews">ޚަބަރު</button>
+      <button type="button" onclick="switchView('polls'); toggleMobileNav()" class="block w-full text-start px-3 py-2 rounded-xl text-sm font-semibold hover:bg-sand-50" data-i18n="navPolls">ޕޯލް</button>
+      <button type="button" onclick="switchView('family'); toggleMobileNav()" class="block w-full text-start px-3 py-2 rounded-xl text-sm font-semibold hover:bg-sand-50" data-i18n="navFamily">އާއިލީ ގަސް</button>
+    </div>
+  </header>
 
-    if "</footer>" in html_content:
-        return html_content.replace("</footer>", f"  <div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 text-end\">{badge_html}</div>\n  </footer>", 1)
+  <!-- Main Application Views -->
+  <main class="flex-1">
+    <!-- Island Overview Section -->
+    <section id="view-overview" class="view-panel fade-in">
+      <div class="relative min-h-[420px] sm:min-h-[500px] flex items-end bg-reef-900 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1800&q=85"
+             onerror="this.src='https://placehold.co/1600x800/0E7490/FFFFFF?text=GDh.+Rathafandhoo'"
+             alt="GDh. Rathafandhoo Lagoon"
+             class="absolute inset-0 w-full h-full object-cover opacity-80" />
+        <div class="absolute inset-0 bg-gradient-to-t from-reef-900 via-reef-900/40 to-transparent"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-white w-full">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-xs font-semibold mb-4">
+            <span class="w-2 h-2 rounded-full bg-coral-400"></span>
+            <span>0° 13' N, 72° 59' E • Huvadhu Atoll</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold max-w-3xl leading-tight mb-3" data-i18n="heroTitle">
+            ބޯވަ މަސްވެރިކަމާއި ހިތްގައިމު ފަޅުގެ ރަށް — ރަތަފަންދޫ
+          </h1>
+          <p class="text-sm sm:text-lg text-sand-100 max-w-2xl mb-6" data-i18n="heroSubtitle">
+            ގދ. ރަތަފަންދޫގެ ޚަބަރުތަކާއި، މުޖުތަމަޢުގެ ޚިޔާލުތަކާއި، އާއިލީ ގުޅުންތައް އެއްތަނަކުން ބަލާލާށެވެ.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" onclick="switchView('news')" class="px-5 py-3 rounded-2xl bg-lagoon-500 hover:bg-lagoon-600 text-white text-xs sm:text-sm font-bold cursor-pointer" data-i18n="ctaNews">ޚަބަރުތައް ބަލާ</button>
+            <button type="button" onclick="switchView('family')" class="px-5 py-3 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white text-xs sm:text-sm font-bold cursor-pointer" data-i18n="ctaFamily">އާއިލީ ގަސް ހުޅުވާ</button>
+          </div>
+        </div>
+      </div>
 
-    return html_content
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div class="bg-white p-5 rounded-2xl border border-sand-200">
+            <div class="text-xs text-reef-600 font-semibold" data-i18n="statPopLbl">އާބާދީ</div>
+            <div class="text-2xl font-extrabold text-reef-900 mt-1">1,340+</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-sand-200">
+            <div class="text-xs text-reef-600 font-semibold" data-i18n="statAreaLbl">ބޮޑުމިން</div>
+            <div class="text-2xl font-extrabold text-reef-900 mt-1">48.5 ha</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-sand-200">
+            <div class="text-xs text-reef-600 font-semibold" data-i18n="statDistLbl">މާލެއާ ދުރުމިން</div>
+            <div class="text-2xl font-extrabold text-reef-900 mt-1">423 km</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-sand-200">
+            <div class="text-xs text-reef-600 font-semibold" data-i18n="statTransferLbl">ލޯންޗު ދަތުރު</div>
+            <div class="text-2xl font-extrabold text-lagoon-600 mt-1">~25 min</div>
+          </div>
+        </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-3xl border border-sand-200">
+            <h2 class="text-lg font-extrabold text-reef-900 mb-2" data-i18n="cardGeoTitle">ފަޅާއި ޤުދުރަތީ ރީތިކަން</h2>
+            <p class="text-sm text-reef-600 leading-relaxed" data-i18n="cardGeoBody">
+              ހުވަދުއަތޮޅު ދެކުނުބުރީގައި އޮންނަ ރަތަފަންދޫއަކީ ސާފު ފަޅާއި، ހުދު ދޮންވެލީގެ ތުނޑިއާއި، މުރަކަ ފަރުތަކުން މުއްސަނދި ރަށެކެވެ.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-3xl border border-sand-200">
+            <h2 class="text-lg font-extrabold text-reef-900 mb-2" data-i18n="cardFishTitle">ބޯވަ މަސްވެރިކަމުގެ ތަރިކަ</h2>
+            <p class="text-sm text-reef-600 leading-relaxed" data-i18n="cardFishBody">
+              ދިޔަވަރު ހިކޭ ވަގުތުތަކުގައި ފަރުމައްޗަށް ނުކުމެ ބޯވަ ނެގުމަކީ ރަތަފަންދޫގެ ޒަމާންވީ ހުނަރުވެރިކަމާއި ތާރީޚުގެ މުހިންމު ބައެކެވެ.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-3xl border border-sand-200">
+            <h2 class="text-lg font-extrabold text-reef-900 mb-2" data-i18n="cardCommTitle">މުޖުތަމަޢުއާއި އެކުވެރިކަން</h2>
+            <p class="text-sm text-reef-600 leading-relaxed" data-i18n="cardCommBody">
+              ހުވަދޫ ބަހުރުވައިގެ ފޮނި ރާގާއި، ރަށުގެ ގެބިސީތަކުގެ ގުޅުމާއި، އެކުވެރި މެހެމާންދާރީއަކީ ރަތަފަންދޫގެ ޚާއްޞަ ސިފައެވެ.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-def write_zip_archive(html_path: Path, zip_path: Path) -> Path:
-    """Package the updated HTML file and README into a ZIP file."""
-    with zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
-        zf.write(html_path, arcname="index.html")
-        zf.writestr("README.md", DEFAULT_README)
-    return zip_path.resolve()
+    <!-- News Section -->
+    <section id="view-news" class="view-panel hidden fade-in">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-lagoon-600" data-i18n="newsEyebrow">ރަށުގެ އަޕްޑޭޓްތައް</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-reef-900 mt-1" data-i18n="newsTitle">ޚަބަރާއި އިޢުލާންތައް</h2>
+          </div>
+          <select id="news-filter" onchange="renderNews()" class="px-4 py-2.5 rounded-xl bg-white border border-sand-200 text-xs sm:text-sm font-bold text-reef-900">
+            <option value="all" data-i18n="filterAll">ހުރިހާ ޚަބަރެއް</option>
+            <option value="Council" data-i18n="filterCouncil">ކައުންސިލް</option>
+            <option value="Community" data-i18n="filterCommunity">މުޖުތަމަޢު</option>
+          </select>
+        </div>
+        <div id="news-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+    </section>
 
+    <!-- Polls Section -->
+    <section id="view-polls" class="view-panel hidden fade-in">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-coral-500" data-i18n="pollsEyebrow">ރައްޔިތުންގެ ޚިޔާލު</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-reef-900 mt-1" data-i18n="pollsTitle">މުޖުތަމަޢުގެ ޕޯލްތައް</h2>
+        </div>
+        <div id="polls-list" class="space-y-6"></div>
+      </div>
+    </section>
 
-def main() -> int:
-    """Run the portal update workflow with clear error handling."""
-    args = parse_args()
-    target_path = args.target
+    <!-- Family Tree Section -->
+    <section id="view-family" class="view-panel hidden fade-in">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-lagoon-600" data-i18n="familyEyebrow">ނަސަބު އަދި ގެބިސީ</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-reef-900 mt-1" data-i18n="familyTitle">ރަތަފަންދޫ އާއިލީ ގަސް</h2>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <input id="family-search" type="text" oninput="renderFamily()" placeholder="ނަން ނުވަތަ ގެ ހޯދާ..." class="px-3.5 py-2 rounded-xl bg-white border border-sand-200 text-xs sm:text-sm" />
+            <button type="button" onclick="openAddMemberModal()" class="px-4 py-2 rounded-xl bg-coral-500 hover:bg-coral-600 text-white text-xs sm:text-sm font-bold cursor-pointer" data-i18n="addMemberBtn">+ މެންބަރެއް އިތުރުކުރޭ</button>
+          </div>
+        </div>
 
-    try:
-        if args.source is not None:
-            if not args.source.is_file():
-                raise FileNotFoundError(f"Source file not found: {args.source}")
-            if args.source.resolve() == target_path.resolve():
-                raise ValueError(
-                    f"--source ('{args.source}') and --target ('{target_path}') are the same file; "
-                    "pass a different source file instead."
-                )
-            raw_html = args.source.read_text(encoding="utf-8")
-        else:
-            if not target_path.is_file():
-                raise FileNotFoundError(
-                    f"Target '{target_path}' does not exist. Pass --source <file.html> to create it."
-                )
-            if not args.force_stamp:
-                raise ValueError(
-                    f"No --source file provided and --force-stamp was not set. "
-                    f"Refusing to overwrite '{target_path}' with its own existing contents. "
-                    "Pass --source new_page.html or use --force-stamp."
-                )
-            raw_html = target_path.read_text(encoding="utf-8")
+        <div id="family-generations" class="rounded-3xl border border-sand-200 tree-canvas p-6 sm:p-8 space-y-8"></div>
+      </div>
+    </section>
+  </main>
 
-        if not raw_html.strip():
-            raise ValueError("HTML content is empty; aborting to avoid writing a blank page.")
+  <!-- Add Family Member Modal -->
+  <div id="add-member-modal" class="hidden fixed inset-0 z-50 bg-reef-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 border border-sand-200 shadow-2xl fade-in">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-extrabold text-reef-900" data-i18n="addMemberModalTitle">އައު އާއިލީ މެންބަރެއް</h3>
+        <button type="button" onclick="closeAddMemberModal()" class="p-1.5 rounded-lg hover:bg-sand-100 cursor-pointer">✕</button>
+      </div>
+      <form onsubmit="handleAddMember(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-reef-700 mb-1" data-i18n="lblName">ފުރިހަމަ ނަން *</label>
+          <input id="m-name" type="text" required class="w-full px-3.5 py-2 rounded-xl border border-sand-200 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-reef-700 mb-1" data-i18n="lblHouse">ގޭގެ ނަން *</label>
+          <input id="m-house" type="text" required class="w-full px-3.5 py-2 rounded-xl border border-sand-200 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-reef-700 mb-1" data-i18n="lblParent">ބައްޕަ / މަންމަ (Parent)</label>
+          <select id="m-parent" class="w-full px-3.5 py-2 rounded-xl border border-sand-200 text-sm bg-white"></select>
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddMemberModal()" class="px-4 py-2 rounded-xl bg-sand-100 text-xs font-bold cursor-pointer" data-i18n="btnCancel">ކެންސަލް</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-lagoon-600 hover:bg-lagoon-700 text-white text-xs font-bold cursor-pointer" data-i18n="btnSave">ރައްކާކުރޭ</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-        if not args.no_backup and target_path.exists():
-            backup_file = create_backup(target_path)
-            if backup_file:
-                print(f"Backup created: {backup_file}")
+  <!-- Footer -->
+  <footer class="bg-reef-900 text-sand-200 py-6 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-bold text-white" data-i18n="brandTitle">މައި ރަތަފަންދޫ</div>
+      <div>GDh. Rathafandhoo • Republic of Maldives</div>
+    </div>
+  </footer>
 
-        build_label = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        updated_html = inject_build_stamp(raw_html, build_label)
+  <script>
+    // LocalStorage key and bilingual translations (Dhivehi RTL & English LTR)
+    const STORAGE_KEY = 'rathafandhoo_portal_html_v1';
 
-        target_path.write_text(updated_html, encoding="utf-8")
-        print(f"Updated '{target_path}' successfully ({build_label}).")
+    const I18N = {
+      dv: {
+        brandTitle: 'މައި ރަތަފަންދޫ',
+        brandSub: 'ގދ. ރަތަފަންދޫ • ހުވަދުއަތޮޅު ދެކުނުބުރި',
+        navOverview: 'ރަށުގެ މަޢުލޫމާތު',
+        navNews: 'ޚަބަރު',
+        navPolls: 'ޕޯލް',
+        navFamily: 'އާއިލީ ގަސް',
+        heroTitle: 'ބޯވަ މަސްވެރިކަމާއި ހިތްގައިމު ފަޅުގެ ރަށް — ރަތަފަންދޫ',
+        heroSubtitle: 'ގދ. ރަތަފަންދޫގެ ޚަބަރުތަކާއި، މުޖުތަމަޢުގެ ޚިޔާލުތަކާއި، އާއިލީ ގުޅުންތައް އެއްތަނަކުން ބަލާލާށެވެ.',
+        ctaNews: 'ޚަބަރުތައް ބަލާ',
+        ctaFamily: 'އާއިލީ ގަސް ހުޅުވާ',
+        statPopLbl: 'އާބާދީ',
+        statAreaLbl: 'ބޮޑުމިން',
+        statDistLbl: 'މާލެއާ ދުރުމިން',
+        statTransferLbl: 'ލޯންޗު ދަތުރު',
+        cardGeoTitle: 'ފަޅާއި ޤުދުރަތީ ރީތިކަން',
+        cardGeoBody: 'ހުވަދުއަތޮޅު ދެކުނުބުރީގައި އޮންނަ ރަތަފަންދޫއަކީ ސާފު ފަޅާއި، ހުދު ދޮންވެލީގެ ތުނޑިއާއި، މުރަކަ ފަރުތަކުން މުއްސަނދި ރަށެކެވެ.',
+        cardFishTitle: 'ބޯވަ މަސްވެރިކަމުގެ ތަރިކަ',
+        cardFishBody: 'ދިޔަވަރު ހިކޭ ވަގުތުތަކުގައި ފަރުމައްޗަށް ނުކުމެ ބޯވަ ނެގުމަކީ ރަތަފަންދޫގެ ޒަމާންވީ ހުނަރުވެރިކަމާއި ތާރީޚުގެ މުހިންމު ބައެކެވެ.',
+        cardCommTitle: 'މުޖުތަމަޢުއާއި އެކުވެރިކަން',
+        cardCommBody: 'ހުވަދޫ ބަހުރުވައިގެ ފޮނި ރާގާއި، ރަށުގެ ގެބިސީތަކުގެ ގުޅުމާއި، އެކުވެރި މެހެމާންދާރީއަކީ ރަތަފަންދޫގެ ޚާއްޞަ ސިފައެވެ.',
+        newsEyebrow: 'ރަށުގެ އަޕްޑޭޓްތައް',
+        newsTitle: 'ޚަބަރާއި އިޢުލާންތައް',
+        filterAll: 'ހުރިހާ ޚަބަރެއް',
+        filterCouncil: 'ކައުންސިލް',
+        filterCommunity: 'މުޖުތަމަޢު',
+        pollsEyebrow: 'ރައްޔިތުންގެ ޚިޔާލު',
+        pollsTitle: 'މުޖުތަމަޢުގެ ޕޯލްތައް',
+        familyEyebrow: 'ނަސަބު އަދި ގެބިސީ',
+        familyTitle: 'ރަތަފަންދޫ އާއިލީ ގަސް',
+        addMemberBtn: '+ މެންބަރެއް އިތުރުކުރޭ',
+        addMemberModalTitle: 'އައު އާއިލީ މެންބަރެއް',
+        lblName: 'ފުރިހަމަ ނަން *',
+        lblHouse: 'ގޭގެ ނަން *',
+        lblParent: 'ބައްޕަ / މަންމަ (Parent)',
+        btnCancel: 'ކެންސަލް',
+        btnSave: 'ރައްކާކުރޭ'
+      },
+      en: {
+        brandTitle: 'My Rathafandhoo',
+        brandSub: 'GDh. Rathafandhoo • Gaafu Dhaalu Atoll',
+        navOverview: 'Island Overview',
+        navNews: 'News',
+        navPolls: 'Polls',
+        navFamily: 'Family Tree',
+        heroTitle: 'Emerald Lagoons & Octopus Heritage — GDh. Rathafandhoo',
+        heroSubtitle: 'Explore local updates, community polls, and household connections across GDh. Rathafandhoo.',
+        ctaNews: 'Read Island News',
+        ctaFamily: 'Open Family Tree',
+        statPopLbl: 'Population',
+        statAreaLbl: 'Island Area',
+        statDistLbl: 'From Malé',
+        statTransferLbl: 'Boat Transfer',
+        cardGeoTitle: 'Lagoon & Reef Beauty',
+        cardGeoBody: 'Set on the rim of Huvadhu Atoll, Rathafandhoo features calm turquoise waters, white sandbanks, and vibrant coral flats.',
+        cardFishTitle: 'Octopus Harvesting Heritage',
+        cardFishBody: 'Low-tide octopus harvesting on the reef flats is a signature part of Rathafandhoo’s marine history and skill.',
+        cardCommTitle: 'Community & Hospitality',
+        cardCommBody: 'Melodic Huvadhu speech, close-knit households, and warm island hospitality define everyday life in Rathafandhoo.',
+        newsEyebrow: 'Latest Bulletins',
+        newsTitle: 'Island News & Announcements',
+        filterAll: 'All News',
+        filterCouncil: 'Council',
+        filterCommunity: 'Community',
+        pollsEyebrow: 'Community Voice',
+        pollsTitle: 'Island & Civic Polls',
+        familyEyebrow: 'Genealogy & Households',
+        familyTitle: 'Rathafandhoo Family Tree',
+        addMemberBtn: '+ Add Member',
+        addMemberModalTitle: 'Add Family Member',
+        lblName: 'Full Name *',
+        lblHouse: 'House Name *',
+        lblParent: 'Parent (Father / Mother)',
+        btnCancel: 'Cancel',
+        btnSave: 'Save Member'
+      }
+    };
 
-        if args.zip:
-            zip_file = write_zip_archive(target_path, Path("my-rathafandhoo-portal.zip"))
-            print(f"Created archive: {zip_file}")
+    const INITIAL_STATE = {
+      lang: 'dv',
+      votes: {},
+      news: [
+        {
+          id: 'n1',
+          category: 'Council',
+          date: '2026-11-22',
+          titleDv: 'ބަނދަރު ސަރަޙައްދު ފެހިކުރުމާއި ބައްތި ހަރުކުރުމުގެ މަސައްކަތް',
+          titleEn: 'Harbor Waterfront Greening & Solar Lighting Project',
+          bodyDv: 'ރަތަފަންދޫ ބަނދަރު ސަރަޙައްދުގައި ގަސް އިންދުމާއި ސޯލާ ބައްތި ހަރުކުރުމުގެ މަސައްކަތް ކުރިއަށް އެބަދެއެވެ.',
+          bodyEn: 'Shade tree planting and solar lighting installation are underway along the Rathafandhoo harbor front.'
+        },
+        {
+          id: 'n2',
+          category: 'Community',
+          date: '2026-11-15',
+          titleDv: 'ބޯވަ ނެގުމުގެ ސަގާފީ ފެސްޓިވަލް އަންނަ މަހު',
+          titleEn: 'Annual Octopus Reef Festival Coming Next Month',
+          bodyDv: 'ރަށުގެ ޒުވާނުންނާއި ދޮށީ އުމުރުގެ ކެޔޮޅުން ބައިވެރިވާ ޚާއްޞަ ބޯވަ ފެސްޓިވަލް އަންނަ މަހު ބޭއްވުމަށް ހަމަޖެހިއްޖެއެވެ.',
+          bodyEn: 'Local fishers and youth will gather next month for Rathafandhoo’s traditional reef and octopus showcase.'
+        }
+      ],
+      polls: [
+        {
+          id: 'p1',
+          questionDv: 'ރަށުގެ ތަރައްޤީގައި އެންމެ އިސްކަންދޭންވީ ކޮން ކަމަކަށް؟',
+          questionEn: 'What should be the top priority for Rathafandhoo next year?',
+          options: [
+            { id: 'a', labelDv: 'ބަނދަރު ތަރައްޤީކުރުން', labelEn: 'Harbor & Boat Slipway Upgrade', votes: 64 },
+            { id: 'b', labelDv: 'ގިރާ ސަރަޙައްދު ޙިމާޔަތްކުރުން', labelEn: 'Coastal & Beach Protection', votes: 82 },
+            { id: 'c', labelDv: 'ޒުވާނުންގެ ކުޅިވަރު ވަޞީލަތްތައް', labelEn: 'Youth Sports Facilities', votes: 45 }
+          ]
+        }
+      ],
+      members: [
+        { id: 'm1', name: 'ޙަސަން ޢަބްދުﷲ', house: 'ނޫރާނީގެ', parentId: '' },
+        { id: 'm2', name: 'ޚަދީޖާ އިބްރާހީމް', house: 'ނޫރާނީގެ', parentId: '' },
+        { id: 'm3', name: 'އަޙްމަދު ޙަސަން', house: 'ނޫރާނީގެ', parentId: 'm1' },
+        { id: 'm4', name: 'ފާޠިމަތު ޙަސަން', house: 'ޗާންދަނީގެ', parentId: 'm1' },
+        { id: 'm5', name: 'މުޙައްމަދު އަޙްމަދު', house: 'ނޫރާނީގެ', parentId: 'm3' }
+      ]
+    };
 
-        return 0
-    except Exception as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
+    let state = loadState();
 
+    // Load saved state safely from localStorage
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return { ...INITIAL_STATE, ...JSON.parse(raw) };
+      } catch (err) {
+        console.warn('Failed reading saved state:', err);
+      }
+      return JSON.parse(JSON.stringify(INITIAL_STATE));
+    }
 
-if __name__ == "__main__":
-    sys.exit(main())
+    // Persist state to localStorage with user feedback on failure
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (err) {
+        showToast('Unable to save changes locally.');
+      }
+    }
+
+    // Display a non-blocking toast notification
+    function showToast(msg) {
+      const box = document.getElementById('toast-container');
+      if (!box) return;
+      const item = document.createElement('div');
+      item.className = 'pointer-events-auto px-4 py-3 rounded-2xl bg-reef-900 text-white text-xs sm:text-sm font-semibold shadow-lg fade-in';
+      item.textContent = msg;
+      box.appendChild(item);
+      setTimeout(() => item.remove(), 3200);
+    }
+
+    // Switch between Dhivehi (RTL) and English (LTR)
+    function toggleLanguage() {
+      state.lang = state.lang === 'dv' ? 'en' : 'dv';
+      saveState();
+      applyLanguage();
+      renderAll();
+    }
+
+    // Apply document direction, language label, and translated strings
+    function applyLanguage() {
+      const isDv = state.lang === 'dv';
+      document.documentElement.lang = isDv ? 'dv' : 'en';
+      document.documentElement.dir = isDv ? 'rtl' : 'ltr';
+      const langLabel = document.getElementById('lang-label');
+      if (langLabel) langLabel.textContent = isDv ? 'English' : 'ދިވެހި';
+
+      const dict = I18N[state.lang] || I18N.dv;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+    }
+
+    // Switch active portal section view
+    function switchView(viewName) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-pill').forEach(btn => {
+        const active = btn.getAttribute('data-nav') === viewName;
+        btn.className = active
+          ? 'nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-lagoon-700 cursor-pointer'
+          : 'nav-pill px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-reef-700 hover:text-lagoon-600 cursor-pointer';
+      });
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+
+    // Toggle mobile navigation drawer visibility
+    function toggleMobileNav() {
+      const mobileNav = document.getElementById('mobile-nav');
+      if (mobileNav) mobileNav.classList.toggle('hidden');
+    }
+
+    // Render filtered island news cards
+    function renderNews() {
+      const listEl = document.getElementById('news-list');
+      const filterEl = document.getElementById('news-filter');
+      if (!listEl || !filterEl) return;
+
+      const isDv = state.lang === 'dv';
+      const filter = filterEl.value;
+      const items = filter === 'all' ? state.news : state.news.filter(n => n.category === filter);
+      listEl.innerHTML = items.map(n => `
+        <article class="bg-white rounded-3xl p-6 border border-sand-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs text-lagoon-600 font-bold mb-2">
+              <span>${n.category}</span>
+              <span>${n.date}</span>
+            </div>
+            <h3 class="text-lg font-extrabold text-reef-900 mb-2">${isDv ? n.titleDv : n.titleEn}</h3>
+            <p class="text-sm text-reef-600 leading-relaxed">${isDv ? n.bodyDv : n.bodyEn}</p>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // Record a community poll vote and update percentages
+    function votePoll(pollId, optionId) {
+      const poll = state.polls.find(p => p.id === pollId);
+      if (!poll) return;
+      const prev = state.votes[pollId];
+      if (prev === optionId) return;
+      if (prev) {
+        const oldOpt = poll.options.find(o => o.id === prev);
+        if (oldOpt && oldOpt.votes > 0) oldOpt.votes -= 1;
+      }
+      const nextOpt = poll.options.find(o => o.id === optionId);
+      if (nextOpt) nextOpt.votes += 1;
+      state.votes[pollId] = optionId;
+      saveState();
+      renderPolls();
+      showToast(state.lang === 'dv' ? 'ވޯޓު ރެކޯޑްކުރެވިއްޖެ' : 'Vote recorded');
+    }
+
+    // Render community polls and vote bars
+    function renderPolls() {
+      const container = document.getElementById('polls-list');
+      if (!container) return;
+
+      const isDv = state.lang === 'dv';
+      container.innerHTML = state.polls.map(poll => {
+        const total = poll.options.reduce((sum, o) => sum + o.votes, 0);
+        const chosen = state.votes[poll.id];
+        return `
+          <div class="bg-white rounded-3xl p-6 border border-sand-200">
+            <h3 class="text-lg sm:text-xl font-extrabold text-reef-900 mb-4">${isDv ? poll.questionDv : poll.questionEn}</h3>
+            <div class="space-y-2.5">
+              ${poll.options.map(opt => {
+                const pct = total > 0 ? Math.round((opt.votes / total) * 100) : 0;
+                const isSelected = chosen === opt.id;
+                return `
+                  <button type="button" onclick="votePoll('${poll.id}', '${opt.id}')" class="w-full text-start p-3.5 rounded-2xl border ${isSelected ? 'border-coral-500 bg-coral-500/5' : 'border-sand-200 hover:border-lagoon-400 bg-sand-50'} flex items-center justify-between gap-3 cursor-pointer">
+                    <span class="text-sm font-bold text-reef-900">${isDv ? opt.labelDv : opt.labelEn}</span>
+                    <span class="text-xs font-extrabold ${isSelected ? 'text-coral-600' : 'text-lagoon-700'}">${pct}% (${opt.votes})</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Compute lineage generation depth while guarding against cycles
+    function getGeneration(member, all, seen = new Set()) {
+      if (!member.parentId || seen.has(member.id)) return 1;
+      seen.add(member.id);
+      const parent = all.find(m => m.id === member.parentId);
+      return parent ? getGeneration(parent, all, seen) + 1 : 1;
+    }
+
+    // Render family tree grouped by generation
+    function renderFamily() {
+      const container = document.getElementById('family-generations');
+      const searchEl = document.getElementById('family-search');
+      if (!container) return;
+
+      const isDv = state.lang === 'dv';
+      const q = ((searchEl && searchEl.value) || '').trim().toLowerCase();
+      const filtered = state.members.filter(m => !q || m.name.toLowerCase().includes(q) || m.house.toLowerCase().includes(q));
+
+      const groups = {};
+      filtered.forEach(m => {
+        const gen = getGeneration(m, state.members);
+        if (!groups[gen]) groups[gen] = [];
+        groups[gen].push(m);
+      });
+
+      const gens = Object.keys(groups).map(Number).sort((a, b) => a - b);
+      container.innerHTML = gens.length ? gens.map(g => `
+        <div>
+          <div class="text-xs font-extrabold text-lagoon-700 bg-white inline-block px-3 py-1 rounded-full border border-sand-200 mb-3">
+            ${isDv ? `${g} ވަނަ ޖީލު` : `Generation ${g}`}
+          </div>
+          <div class="flex flex-wrap gap-4">
+            ${groups[g].map(m => {
+              const parent = state.members.find(p => p.id === m.parentId);
+              return `
+                <div class="bg-white rounded-2xl p-4 border border-sand-200 w-56 shadow-xs">
+                  <div class="font-extrabold text-sm text-reef-900">${m.name}</div>
+                  <div class="text-xs font-semibold text-lagoon-600 mt-0.5">${m.house}</div>
+                  ${parent ? `<div class="text-[11px] text-reef-600 mt-2 pt-2 border-t border-sand-100">${isDv ? 'ބެލެނިވެރިޔާ:' : 'Parent:'} ${parent.name}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('') : `<p class="text-sm text-reef-600 font-semibold">${isDv ? 'މެންބަރަކު ނުފެނުނު' : 'No family members found.'}</p>`;
+    }
+
+    // Open modal and populate parent dropdown
+    function openAddMemberModal() {
+      const sel = document.getElementById('m-parent');
+      const modal = document.getElementById('add-member-modal');
+      if (sel) {
+        sel.innerHTML = `<option value="">--</option>` + state.members.map(m => `<option value="${m.id}">${m.name} (${m.house})</option>`).join('');
+      }
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    // Close add member modal
+    function closeAddMemberModal() {
+      const modal = document.getElementById('add-member-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Handle new family member form submission
+    function handleAddMember(e) {
+      e.preventDefault();
+      const nameEl = document.getElementById('m-name');
+      const houseEl = document.getElementById('m-house');
+      const parentEl = document.getElementById('m-parent');
+      if (!nameEl || !houseEl) return;
+
+      const name = nameEl.value.trim();
+      const house = houseEl.value.trim();
+      const parentId = parentEl ? parentEl.value : '';
+      if (!name || !house) return;
+
+      state.members.push({ id: 'm-' + Date.now(), name, house, parentId });
+      saveState();
+      closeAddMemberModal();
+      e.target.reset();
+      renderFamily();
+      showToast(state.lang === 'dv' ? 'މެންބަރު އިތުރުކުރެވިއްޖެ' : 'Family member added');
+    }
+
+    // Render all dynamic portal components
+    function renderAll() {
+      renderNews();
+      renderPolls();
+      renderFamily();
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+
+    // Initialize portal on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      applyLanguage();
+      switchView('overview');
+      renderAll();
+    });
+  </script>
+</body>
+</html>
